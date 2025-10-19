@@ -1,3 +1,11 @@
+## Hello OVER/UNDER players
+
+A message about ruining the fun:
+
+Listen, we know you can just read through this project and figure most things out. Heck, you can just open up all the stories directly in here. I don't want to spend my playtime endlessly trying to plug up security gaps. It'll be more fun if you just access this via in-game means.
+
+## Rest of the readme
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
