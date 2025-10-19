@@ -24,6 +24,7 @@ export function parseStory(content: string): Story {
     introduction: "",
     scenes: [],
   };
+  const seenSceneIds = new Set<number>();
 
   // Parse title (first non-empty line)
   while (currentIndex < lines.length && !lines[currentIndex].trim()) {
@@ -108,6 +109,14 @@ export function parseStory(content: string): Story {
           break;
         }
       }
+
+      // Validate unique scene ID
+      if (seenSceneIds.has(sceneId)) {
+        throw new Error(
+          `Duplicate scene ID found: ${sceneId}. Scene IDs must be unique.`
+        );
+      }
+      seenSceneIds.add(sceneId);
 
       story.scenes.push({
         id: sceneId,

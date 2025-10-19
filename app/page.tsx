@@ -26,7 +26,6 @@ Type 'load' to start a new story, then enter the access code when prompted.
 Available commands:
 - load : Start a new story
 - help : Show this help message
-
 `;
 
 export default function Home() {
