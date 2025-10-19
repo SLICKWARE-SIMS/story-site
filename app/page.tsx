@@ -18,10 +18,14 @@ import {
 } from "../stories/parseStoryClient";
 
 const bannerText = `
-Welcome to Slickware Terminal Interface
+
+░░░░░░░░      ░░░  ░░░░░░░░        ░░░      ░░░  ░░░░  ░░  ░░░░  ░░░      ░░░       ░░░        ░░░░░░░░░      ░░░        ░░  ░░░░  ░░░      ░░░░░░░░
+▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒▒  ▒▒▒▒  ▒▒  ▒▒▒  ▒▒▒  ▒  ▒  ▒▒  ▒▒▒▒  ▒▒  ▒▒▒▒  ▒▒  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒▒   ▒▒   ▒▒  ▒▒▒▒▒▒▒▒▒▒▒▒▒
+▓▓▓▓▓▓▓▓      ▓▓▓  ▓▓▓▓▓▓▓▓▓▓▓  ▓▓▓▓▓  ▓▓▓▓▓▓▓▓     ▓▓▓▓▓        ▓▓  ▓▓▓▓  ▓▓       ▓▓▓      ▓▓▓▓▓▓▓▓▓▓▓      ▓▓▓▓▓▓  ▓▓▓▓▓        ▓▓▓      ▓▓▓▓▓▓▓▓
+█████████████  ██  ███████████  █████  ████  ██  ███  ███   ██   ██        ██  ███  ███  ████████████████████  █████  █████  █  █  ████████  ███████
+████████      ███        ██        ███      ███  ████  ██  ████  ██  ████  ██  ████  ██        █████████      ███        ██  ████  ███      ████████
+
 =======================================
-This is an interactive terminal where you can enter commands.
-Type 'load' to start a new story, then enter the access code when prompted.
 
 Available commands:
 - load : Start a new story
