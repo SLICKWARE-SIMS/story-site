@@ -28,14 +28,15 @@ const bannerText = `
 =======================================
 
 Available commands:
-- load : Start a new story
+- login : Login and start a new story
 - help : Show this help message
 `;
 
 export default function Home() {
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
-  const [waitingForCode, setWaitingForCode] = useState(false);
+  const [loginStep, setLoginStep] = useState<null | "name" | "code">(null);
+  const [userName, setUserName] = useState("");
   const [currentScene, setCurrentScene] = useState<Scene | null>(null);
   const [story, setStory] = useState<Story | null>(null);
 
@@ -55,8 +56,26 @@ export default function Home() {
   };
 
   const handleCommand = async (command: string) => {
-    if (waitingForCode) {
-      setWaitingForCode(false);
+    if (loginStep === "name") {
+      if (command.toLowerCase().includes("beefstink")) {
+        window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+      }
+      setUserName(command);
+      setLoginStep("code");
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: `Welcome, ${command}! Please enter your story access code:`,
+            }),
+          ],
+        }),
+      ]);
+      return;
+    }
+
+    if (loginStep === "code") {
+      setLoginStep(null);
       if (command.toLowerCase() === "asdf") {
         try {
           const storyContent = await loadStory();
@@ -95,7 +114,9 @@ export default function Home() {
       print([
         textLine({
           words: [
-            textWord({ characters: "Invalid code. Type 'load' to try again." }),
+            textWord({
+              characters: "Invalid code. Type 'login' to try again.",
+            }),
           ],
         }),
       ]);
@@ -139,13 +160,11 @@ export default function Home() {
     }
 
     switch (command.toLowerCase()) {
-      case "load":
-        setWaitingForCode(true);
+      case "login":
+        setLoginStep("name");
         print([
           textLine({
-            words: [
-              textWord({ characters: "Please enter the story access code:" }),
-            ],
+            words: [textWord({ characters: "Please enter your name:" })],
           }),
         ]);
         break;
@@ -155,7 +174,7 @@ export default function Home() {
             words: [
               textWord({
                 characters: `Available commands:
-- load : Start a new story
+- login : Login and start a new story
 - help : Show this help message`,
               }),
             ],
