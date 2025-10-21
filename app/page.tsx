@@ -17,6 +17,7 @@ import {
   type Choice,
 } from "../stories/parseStoryClient";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
+import { useInventory } from "./hooks/useInventory";
 
 const PageContainer = styled.div`
   width: 100vw;
@@ -87,13 +88,14 @@ export default function Home() {
   const { data, loading, error } = useGoogleSheet(
     "1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg"
   );
+  const { inventory } = useInventory();
   console.log({ data, loading, error });
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
   const [loginStep, setLoginStep] = useState<
     null | "name" | "story" | "access"
   >(null);
-  const [userName, setUserName] = useState("");
+  const [_userName, setUserName] = useState("");
   const [currentScene, setCurrentScene] = useState<Scene | null>(null);
   const [story, setStory] = useState<Story | null>(null);
   const [demoMode, setDemoMode] = useState(false);
@@ -335,6 +337,35 @@ export default function Home() {
               }),
             ],
           }),
+        ]);
+        break;
+      case "inventory":
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `\nCREDITS: ${inventory.credits}\n`,
+              }),
+            ],
+          }),
+          textLine({
+            words: [
+              textWord({
+                characters: `ITEMS (${inventory.items.length}):`,
+              }),
+            ],
+          }),
+          ...(inventory.items.length > 0
+            ? inventory.items.map((item) =>
+                textLine({
+                  words: [textWord({ characters: `  - ${item}` })],
+                })
+              )
+            : [
+                textLine({
+                  words: [textWord({ characters: "  (empty)" })],
+                }),
+              ]),
         ]);
         break;
       default:
