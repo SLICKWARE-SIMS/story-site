@@ -35,10 +35,15 @@ Available commands:
 export default function Home() {
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
-  const [loginStep, setLoginStep] = useState<null | "name" | "code">(null);
+  const [loginStep, setLoginStep] = useState<
+    null | "name" | "story" | "access"
+  >(null);
   const [userName, setUserName] = useState("");
   const [currentScene, setCurrentScene] = useState<Scene | null>(null);
   const [story, setStory] = useState<Story | null>(null);
+  const [demoMode, setDemoMode] = useState(false);
+  const [scenesPlayed, setScenesPlayed] = useState(0);
+  const [storyCode, setStoryCode] = useState("");
 
   const printScene = (scene: Scene) => {
     print([
@@ -61,12 +66,12 @@ export default function Home() {
         window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
       }
       setUserName(command);
-      setLoginStep("code");
+      setLoginStep("story");
       print([
         textLine({
           words: [
             textWord({
-              characters: `Welcome, ${command}! Please enter your story access code:`,
+              characters: `Welcome, ${command}! Please enter your story code:`,
             }),
           ],
         }),
@@ -74,52 +79,92 @@ export default function Home() {
       return;
     }
 
-    if (loginStep === "code") {
-      setLoginStep(null);
-      if (command.toLowerCase() === "asdf") {
-        try {
-          const storyContent = await loadStory();
-          const parsedStory = parseStory(storyContent);
-          setStory(parsedStory);
-          print([
-            textLine({
-              words: [textWord({ characters: "\nStory loaded successfully!" })],
-            }),
-            textLine({
-              words: [textWord({ characters: "\n" + parsedStory.title })],
-            }),
-            textLine({
-              words: [
-                textWord({
-                  characters: "\n" + parsedStory.introduction + "\n",
-                }),
-              ],
-            }),
-          ]);
-          setCurrentScene(parsedStory.scenes[0]);
-          printScene(parsedStory.scenes[0]);
-        } catch (error) {
-          print([
-            textLine({
-              words: [
-                textWord({
-                  characters: "Error loading story. Please try again.",
-                }),
-              ],
-            }),
-          ]);
-        }
-        return;
-      }
+    if (loginStep === "story") {
+      // TODO: some validation of story code
+      // right now there's just one story
+      setStoryCode(command);
+      setLoginStep("access");
       print([
         textLine({
           words: [
             textWord({
-              characters: "Invalid code. Type 'login' to try again.",
+              characters: "Now enter your access code:",
             }),
           ],
         }),
       ]);
+      return;
+    }
+
+    if (loginStep === "access") {
+      setLoginStep(null);
+      try {
+        const storyContent = await loadStory();
+        const parsedStory = parseStory(storyContent);
+        setStory(parsedStory);
+
+        // Check access code to determine demo mode
+        const isDemoAccess = command.toLowerCase() === "demo";
+        const isFullAccess = command.toLowerCase() === "asdf";
+
+        if (!isDemoAccess && !isFullAccess) {
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: "Invalid access code. Type 'login' to try again.",
+                }),
+              ],
+            }),
+          ]);
+          return;
+        }
+
+        setDemoMode(isDemoAccess);
+        setScenesPlayed(1);
+
+        const modeText = isDemoAccess
+          ? "\n[DEMO MODE - 10 scenes limit]"
+          : "\nStory loaded successfully!";
+        const outputLines = [
+          textLine({
+            words: [textWord({ characters: modeText })],
+          }),
+          textLine({
+            words: [textWord({ characters: "\n" + parsedStory.title })],
+          }),
+          textLine({
+            words: [
+              textWord({
+                characters: "\n" + parsedStory.introduction + "\n",
+              }),
+            ],
+          }),
+        ];
+
+        if (isDemoAccess) {
+          outputLines.push(
+            textLine({
+              words: [textWord({ characters: "[Scene 1/10]" })],
+            })
+          );
+        }
+
+        print(outputLines);
+        setCurrentScene(parsedStory.scenes[0]);
+        printScene(parsedStory.scenes[0]);
+      } catch (error) {
+        // Error loading story
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: "Error loading story. Please try again.",
+              }),
+            ],
+          }),
+        ]);
+      }
       return;
     }
 
@@ -140,10 +185,40 @@ export default function Home() {
         return;
       }
 
+      // Check if demo mode has reached 10 scenes
+      if (demoMode && scenesPlayed >= 10) {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `\n[DEMO MODE ENDED]\nYou have explored 10 scenes. Type 'login' to try the full story or play again.`,
+              }),
+            ],
+          }),
+        ]);
+        setCurrentScene(null);
+        setStory(null);
+        setDemoMode(false);
+        setScenesPlayed(0);
+        return;
+      }
+
       // Find and display the next scene
       const nextScene = story?.scenes.find((s) => s.id === choice.id);
       if (nextScene) {
+        const newSceneCount = scenesPlayed + 1;
+        setScenesPlayed(newSceneCount);
         setCurrentScene(nextScene);
+
+        // Print scene counter in demo mode
+        if (demoMode) {
+          print([
+            textLine({
+              words: [textWord({ characters: `[Scene ${newSceneCount}/10]` })],
+            }),
+          ]);
+        }
+
         printScene(nextScene);
       } else {
         print([
