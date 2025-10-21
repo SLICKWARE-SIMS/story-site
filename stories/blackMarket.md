@@ -24,7 +24,7 @@ With 50cr to your name you enter block [13,17]
 
 
 -----------------------------------------------------------------------
-1. START
+0. START
 
 You arrive in block [13,17] and are greeted by a cacophony of heavenly scents mixed with putrid odors. A number of hot food vendors line the bedraggled streets and a few catch your eye.
 

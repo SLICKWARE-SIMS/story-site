@@ -71,6 +71,11 @@ export function parseStory(content: string): Story {
           break;
         }
 
+        // check for a continuation line, i.e. "Go to [37]"
+        if (/^Go to \[\d+\]$/.test(trimmed)) {
+          break;
+        }
+
         // Check if this is the next scene header
         if (/^\d+\.\s+[A-Z]/.test(trimmed)) {
           break;
@@ -89,6 +94,7 @@ export function parseStory(content: string): Story {
 
         // Check if this is a choice line
         const choiceMatch = choiceLine.match(/^\[(\d+)\]\s+(.+)$/);
+        const goToMatch = choiceLine.match(/^Go to \[(\d+)\]$/);
         if (choiceMatch) {
           const choiceId = parseInt(choiceMatch[1], 10);
           let choiceText = choiceMatch[2].trim();
@@ -99,6 +105,13 @@ export function parseStory(content: string): Story {
           choices.push({
             id: choiceId,
             text: choiceText,
+          });
+          currentIndex++;
+        } else if (goToMatch) {
+          const choiceId = parseInt(goToMatch[1], 10);
+          choices.push({
+            id: choiceId,
+            text: `Go to [${choiceId}]`,
           });
           currentIndex++;
         } else if (choiceLine === "" || /^\s*$/.test(choiceLine)) {
