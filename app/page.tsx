@@ -7,7 +7,7 @@ import {
   textWord,
   commandWord,
 } from "crt-terminal";
-import styles from "./page.module.css";
+import styled from "styled-components";
 import { useState } from "react";
 import { loadStory } from "./actions";
 import {
@@ -16,6 +16,19 @@ import {
   type Scene,
   type Choice,
 } from "../stories/parseStoryClient";
+
+const PageContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+
+  .crt-character {
+    word-break: break-word;
+  }
+`;
 
 const bannerText = `
 
@@ -270,7 +283,7 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.page}>
+    <PageContainer>
       <Terminal
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: bannerText })] })]}
@@ -279,6 +292,6 @@ export default function Home() {
           screenEffects: false,
         }}
       />
-    </div>
+    </PageContainer>
   );
 }
