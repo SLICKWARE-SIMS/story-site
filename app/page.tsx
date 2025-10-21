@@ -8,7 +8,7 @@ import {
   commandWord,
 } from "crt-terminal";
 import styled from "styled-components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { loadStory } from "./actions";
 import {
   parseStory,
@@ -16,6 +16,7 @@ import {
   type Scene,
   type Choice,
 } from "../stories/parseStoryClient";
+import { useGoogleSheet } from "./hooks/useGoogleSheet";
 
 const PageContainer = styled.div`
   width: 100vw;
@@ -75,6 +76,10 @@ const resolveBelligerentUser = () => {
 };
 
 export default function Home() {
+  const { data, loading, error } = useGoogleSheet(
+    "1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg"
+  );
+  console.log({ data, loading, error });
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
   const [loginStep, setLoginStep] = useState<
@@ -86,6 +91,11 @@ export default function Home() {
   const [demoMode, setDemoMode] = useState(false);
   const [scenesPlayed, setScenesPlayed] = useState(0);
   const [storyCode, setStoryCode] = useState("");
+
+  const codes = useMemo(() => {
+    if (!data) return [];
+    return data.map((row) => row["6 Character"]);
+  }, [data]);
 
   const printScene = (scene: Scene) => {
     print([
@@ -150,7 +160,7 @@ export default function Home() {
 
         // Check access code to determine demo mode
         const isDemoAccess = command.toLowerCase() === "demo";
-        const isFullAccess = command.toLowerCase() === "asdf";
+        const isFullAccess = ["asdf", ...codes].includes(command.toLowerCase());
 
         if (!isDemoAccess && !isFullAccess) {
           print([
