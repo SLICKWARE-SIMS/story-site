@@ -26,6 +26,14 @@ const PageContainer = styled.div`
   overflow: hidden;
   background: #000;
 
+  @media (max-width: 767px) {
+    .crt-terminal {
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+  }
+
   .crt-character {
     word-break: break-word;
   }
