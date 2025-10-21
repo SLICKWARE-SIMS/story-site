@@ -144,7 +144,7 @@ export default function Home() {
     if (loginStep === "access") {
       setLoginStep(null);
       try {
-        const storyContent = await loadStory();
+        const storyContent = await loadStory(storyCode);
         const parsedStory = parseStory(storyContent);
         setStory(parsedStory);
 
@@ -198,17 +198,35 @@ export default function Home() {
         print(outputLines);
         setCurrentScene(parsedStory.scenes[0]);
         printScene(parsedStory.scenes[0]);
-      } catch (error) {
+      } catch (error: unknown) {
+        let errMessage = "";
+        if (error instanceof Error) {
+          errMessage = error.message;
+        }
+
         // Error loading story
-        print([
+        const errArray = [
           textLine({
             words: [
               textWord({
-                characters: "Error loading story. Please try again.",
+                characters:
+                  "Error loading story. Please Type 'login' to try again.",
               }),
             ],
           }),
-        ]);
+        ];
+        if (errMessage) {
+          errArray.unshift(
+            textLine({
+              words: [
+                textWord({
+                  characters: errMessage,
+                }),
+              ],
+            })
+          );
+        }
+        print(errArray);
       }
       return;
     }
