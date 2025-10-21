@@ -45,6 +45,35 @@ Available commands:
 - help : Show this help message
 `;
 
+const sqlKeywords = [
+  "SELECT",
+  "INSERT",
+  "UPDATE",
+  "DELETE",
+  "DROP",
+  "ALTER",
+  "CREATE",
+  "EXEC",
+  // "UNION", union is ok
+  "WHERE",
+  "FROM",
+  "JOIN",
+  "--",
+  ";",
+  "/*",
+  "*/",
+];
+const sqlCheck = (command: string) => {
+  const upperCommand = command.toUpperCase();
+  return sqlKeywords.some((keyword) => upperCommand.includes(keyword));
+};
+
+const resolveBelligerentUser = () => {
+  window.location.href = atob(
+    "aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQ=="
+  );
+};
+
 export default function Home() {
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
@@ -74,9 +103,12 @@ export default function Home() {
   };
 
   const handleCommand = async (command: string) => {
+    if (sqlCheck(command)) {
+      return resolveBelligerentUser();
+    }
     if (loginStep === "name") {
       if (command.toLowerCase().includes("beefstink")) {
-        window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        return resolveBelligerentUser();
       }
       setUserName(command);
       setLoginStep("story");
