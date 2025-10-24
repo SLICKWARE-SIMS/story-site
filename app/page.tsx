@@ -4,13 +4,9 @@ import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import styled from "styled-components";
 import { useMemo, useState } from "react";
 import { loadStory } from "./actions";
-import {
-  parseStory,
-  type Story,
-  type Scene,
-} from "../stories/parseStoryClient";
+import { parseMdxToAst, parseTree, type StoryTree } from "../stories/parser";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
-import { useInventory } from "./hooks/useInventory";
+import { useCYOARunner } from "./hooks/runner";
 
 const PageContainer = styled.div`
   width: 100vw;
@@ -47,6 +43,7 @@ const bannerText = `
 Available commands:
 - login : Login and start a new story
 - help : Show this help message
+- inventory : View your inventory
 `;
 
 const sqlKeywords = [
@@ -63,7 +60,7 @@ const sqlKeywords = [
   "FROM",
   "JOIN",
   "--",
-  ";",
+  // ";",
   "/*",
   "*/",
 ];
@@ -82,34 +79,38 @@ export default function Home() {
   const { data } = useGoogleSheet(
     "1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg"
   );
-  const { inventory } = useInventory();
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
   const [loginStep, setLoginStep] = useState<
     null | "name" | "story" | "access"
   >(null);
   const [_userName, setUserName] = useState("");
-  const [currentScene, setCurrentScene] = useState<Scene | null>(null);
-  const [story, setStory] = useState<Story | null>(null);
-  const [demoMode, setDemoMode] = useState(false);
-  const [scenesPlayed, setScenesPlayed] = useState(0);
+  const [storyTree, setStoryTree] = useState<StoryTree | null>(null);
   const [storyCode, setStoryCode] = useState("");
+
+  // Use the CYOA runner hook when we have a story tree
+  const runner = useCYOARunner();
 
   const codes = useMemo(() => {
     if (!data) return [];
     return data.map((row) => row["6 Character"]);
   }, [data]);
 
-  const printScene = (scene: Scene) => {
+  const printPassage = () => {
+    if (!runner) return;
+
     print([
       textLine({
-        words: [textWord({ characters: "\n" + scene.title + "\n" })],
+        words: [
+          textWord({
+            characters: "\n" + runner?.passageText?.join("\n") + "\n",
+          }),
+        ],
       }),
-      textLine({ words: [textWord({ characters: scene.content + "\n" })] }),
       textLine({ words: [textWord({ characters: "\nAvailable choices:" })] }),
-      ...scene.choices.map((choice) =>
+      ...runner.transitionOptions.map((option, idx) =>
         textLine({
-          words: [textWord({ characters: `[${choice.id}] ${choice.text}` })],
+          words: [textWord({ characters: `[${idx + 1}] ${option.text}` })],
         })
       ),
     ]);
@@ -157,19 +158,14 @@ export default function Home() {
     if (loginStep === "access") {
       setLoginStep(null);
       try {
-        const storyContent = await loadStory(storyCode);
-        const parsedStory = parseStory(storyContent);
-        setStory(parsedStory);
-
-        // Check access code to determine demo mode
-        const isDemoAccess = command.toLowerCase() === "demo";
+        // Check access code
         const codesToCheck =
           process.env.NODE_ENV === "development" ? ["asdf"] : [];
         const isFullAccess = [...codesToCheck, ...codes].includes(
           command.toLowerCase()
         );
 
-        if (!isDemoAccess && !isFullAccess) {
+        if (!isFullAccess) {
           print([
             textLine({
               words: [
@@ -181,40 +177,13 @@ export default function Home() {
           ]);
           return;
         }
+        await runner.loadStory(storyCode);
 
-        setDemoMode(isDemoAccess);
-        setScenesPlayed(1);
-
-        const modeText = isDemoAccess
-          ? "\n[DEMO MODE - 10 scenes limit]"
-          : "\nStory loaded successfully!";
-        const outputLines = [
+        print([
           textLine({
-            words: [textWord({ characters: modeText })],
+            words: [textWord({ characters: "\nStory loaded successfully!\n" })],
           }),
-          textLine({
-            words: [textWord({ characters: "\n" + parsedStory.title })],
-          }),
-          textLine({
-            words: [
-              textWord({
-                characters: "\n" + parsedStory.introduction + "\n",
-              }),
-            ],
-          }),
-        ];
-
-        if (isDemoAccess) {
-          outputLines.push(
-            textLine({
-              words: [textWord({ characters: "[Scene 1/10]" })],
-            })
-          );
-        }
-
-        print(outputLines);
-        setCurrentScene(parsedStory.scenes[0]);
-        printScene(parsedStory.scenes[0]);
+        ]);
       } catch (error: unknown) {
         let errMessage = "";
         if (error instanceof Error) {
@@ -249,9 +218,9 @@ export default function Home() {
       return;
     }
 
-    if (currentScene) {
-      const choiceId = parseInt(command, 10);
-      const choice = currentScene.choices.find((c) => c.id === choiceId);
+    if (storyTree && !runner.isDone) {
+      const choiceNum = parseInt(command, 10);
+      const choice = runner.transitionOptions[choiceNum - 1];
 
       if (!choice) {
         print([
@@ -266,51 +235,22 @@ export default function Home() {
         return;
       }
 
-      // Check if demo mode has reached 10 scenes
-      if (demoMode && scenesPlayed >= 10) {
+      // Make the transition
+      runner.transition(choice.header);
+
+      if (runner.isDone) {
         print([
           textLine({
             words: [
               textWord({
-                characters: `\n[DEMO MODE ENDED]\nYou have explored 10 scenes. Type 'login' to try the full story or play again.`,
+                characters: `\n[STORY COMPLETE]\nType 'login' to play again.`,
               }),
             ],
           }),
         ]);
-        setCurrentScene(null);
-        setStory(null);
-        setDemoMode(false);
-        setScenesPlayed(0);
-        return;
-      }
-
-      // Find and display the next scene
-      const nextScene = story?.scenes.find((s) => s.id === choice.id);
-      if (nextScene) {
-        const newSceneCount = scenesPlayed + 1;
-        setScenesPlayed(newSceneCount);
-        setCurrentScene(nextScene);
-
-        // Print scene counter in demo mode
-        if (demoMode) {
-          print([
-            textLine({
-              words: [textWord({ characters: `[Scene ${newSceneCount}/10]` })],
-            }),
-          ]);
-        }
-
-        printScene(nextScene);
+        setStoryTree(null);
       } else {
-        print([
-          textLine({
-            words: [
-              textWord({
-                characters: `You selected: ${choice.text} (Scene ${choice.id} not found)`,
-              }),
-            ],
-          }),
-        ]);
+        printPassage();
       }
       return;
     }
@@ -331,51 +271,121 @@ export default function Home() {
               textWord({
                 characters: `Available commands:
 - login : Login and start a new story
+- inventory : View your inventory
 - help : Show this help message`,
               }),
             ],
           }),
         ]);
         break;
+      case "runner":
+        if (runner) {
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: `\n=== CYOA Runner State ===`,
+                }),
+              ],
+            }),
+            textLine({
+              words: [
+                textWord({
+                  characters: `\nPassage Text:\n${
+                    runner?.passageText?.join("\n") || ""
+                  }\n`,
+                }),
+              ],
+            }),
+            textLine({
+              words: [
+                textWord({
+                  characters: `\nAvailable Transitions:`,
+                }),
+              ],
+            }),
+            ...runner.transitionOptions.map((option, idx) =>
+              textLine({
+                words: [
+                  textWord({
+                    characters: `[${idx + 1}] ${option.text} -> ${
+                      option.header
+                    }`,
+                  }),
+                ],
+              })
+            ),
+            textLine({
+              words: [
+                textWord({
+                  characters: `\nStory Complete: ${
+                    runner.isDone ? "Yes" : "No"
+                  }\n`,
+                }),
+              ],
+            }),
+          ]);
+        } else {
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: "No story loaded. Type 'login' to start.",
+                }),
+              ],
+            }),
+          ]);
+        }
+        break;
       case "inventory":
-        print([
-          textLine({
-            words: [
-              textWord({
-                characters: `\nCREDITS: ${inventory.credits}\n`,
+        if (runner) {
+          if (!runner.inventory || Object.keys(runner.inventory).length === 0) {
+            print([
+              textLine({
+                words: [
+                  textWord({
+                    characters: "Your inventory is empty.\n",
+                  }),
+                ],
               }),
-            ],
-          }),
-          textLine({
-            words: [
-              textWord({
-                characters: `ITEMS (${inventory.items.length}):`,
-              }),
-            ],
-          }),
-          ...(inventory.items.length > 0
-            ? inventory.items.map((item) =>
+            ]);
+            break;
+          }
+
+          // remove empty inventory items
+          print(
+            Object.entries(runner.inventory)
+              .filter(([_, v]) => !!v)
+              .map(([key, value]) =>
                 textLine({
-                  words: [textWord({ characters: `  - ${item}` })],
+                  words: [textWord({ characters: `${key}: ${value}` })],
                 })
               )
-            : [
-                textLine({
-                  words: [textWord({ characters: "  (empty)" })],
+          );
+        } else {
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: "No story loaded. Type 'login' to start.",
                 }),
-              ]),
-        ]);
+              ],
+            }),
+          ]);
+        }
         break;
       case "dev": {
         if (process.env.NODE_ENV === "development") {
           setUserName("SomeKittens");
           setStoryCode("blackMarket");
-          const storyContent = await loadStory("blackMarket");
-          const parsedStory = parseStory(storyContent);
-          setStory(parsedStory);
+          await runner.loadStory("blackMarket");
 
-          setCurrentScene(parsedStory.scenes[0]);
-          printScene(parsedStory.scenes[0]);
+          print([
+            textLine({
+              words: [textWord({ characters: "\nStory loaded (dev mode)!\n" })],
+            }),
+          ]);
+          printPassage();
           break;
         }
       }

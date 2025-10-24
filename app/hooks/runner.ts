@@ -1,5 +1,115 @@
-import { Passage, StoryTree, Transition } from "../../stories/parser";
+import { useState, useCallback, useMemo } from "react";
+import {
+  parseMdxToAst,
+  parseTree,
+  Passage,
+  StoryTree,
+  Transition,
+} from "../../stories/parser";
+import { loadStory } from "../actions";
 
+interface CYOARunnerState {
+  representation: StoryTree;
+  isDone: boolean;
+  currentPassageName: string;
+  currentPassage: Passage;
+  inventory: Record<string, unknown>;
+}
+
+export function useCYOARunner() {
+  const [state, setState] = useState<CYOARunnerState>();
+  const loadStoryIntoCYOA = async (storyCode: string) => {
+    const storyContent = await loadStory(storyCode);
+
+    // Parse for the CYOA runner
+    const ast = parseMdxToAst(storyContent);
+    const representation = parseTree(ast);
+    console.log("representation: ", representation);
+
+    // Initialize the state
+    const currentPassageName = Object.keys(representation.passages)[0];
+    const currentPassage = representation.passages[currentPassageName];
+    const inventory: Record<string, unknown> = {};
+
+    // Execute initialization scripts
+    const executeAll = (arr: string[], inv: Record<string, unknown>) => {
+      // defining inventory just so eval can use it
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const inventory = inv;
+      arr.forEach((statement: string) => {
+        // eslint-disable-next-line no-eval
+        eval(statement);
+      });
+    };
+
+    executeAll(representation.initializationScript, inventory);
+    executeAll(currentPassage.initializationScript, inventory);
+
+    setState({
+      representation,
+      isDone: false,
+      currentPassageName,
+      currentPassage,
+      inventory,
+    });
+  };
+
+  const transition = useCallback((passageName: string) => {
+    setState((prevState) => {
+      if (!prevState) return prevState;
+      const newPassage = prevState.representation.passages[passageName];
+      const newInventory = { ...prevState.inventory };
+
+      // Execute passage initialization script
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const inventory = newInventory;
+      newPassage.initializationScript.forEach((statement: string) => {
+        // eslint-disable-next-line no-eval
+        eval(statement);
+      });
+
+      const isDone = newPassage.transitions.length === 0;
+
+      return {
+        ...prevState,
+        currentPassageName: passageName,
+        currentPassage: newPassage,
+        inventory: newInventory,
+        isDone,
+      };
+    });
+  }, []);
+
+  const transitionOptions = useMemo(() => {
+    if (!state) return [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _inventory = state.inventory;
+
+    return state.currentPassage.transitions.filter(function (
+      transition: Transition
+    ) {
+      const transitionCopy = { ...transition };
+      if (transitionCopy.transitionCriteria !== null) {
+        // eslint-disable-next-line no-eval
+        transitionCopy.isValid = eval(transitionCopy.transitionCriteria);
+      } else {
+        transitionCopy.isValid = true;
+      }
+      return transitionCopy;
+    });
+  }, [state?.currentPassage, state?.inventory]);
+
+  return {
+    loadStory: loadStoryIntoCYOA,
+    passageText: state?.currentPassage.text,
+    isDone: state?.isDone,
+    inventory: state?.inventory,
+    transitionOptions,
+    transition,
+  };
+}
+
+// Keep the class export for backwards compatibility
 export class CYOARunner {
   private _representation: StoryTree;
   private _isDone: boolean;
