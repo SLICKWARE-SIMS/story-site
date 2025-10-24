@@ -472,6 +472,33 @@ The adventure continues.
     expect(result.scenes[0].title).toBe("START");
   });
 
+  it("should preserve newlines in the middle of a scene's content", () => {
+    const mdx = `## INTRO
+
+Intro text.
+
+## SCENE
+
+This is the first line.
+
+This is the second line.
+
+This is the third line.
+
+- [Continue](#next)
+
+## NEXT
+
+Next scene.
+`;
+
+    const result = parseStory(mdx);
+
+    expect(result.scenes[0].content).toBe(
+      "This is the first line.\n\nThis is the second line.\n\nThis is the third line."
+    );
+  });
+
   // describe("should load the blackMarket story successfully", () => {
   //   const fs = require("fs");
   //   const path = require("path");

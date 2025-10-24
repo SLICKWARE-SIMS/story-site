@@ -104,9 +104,9 @@ function parsePassage(tokens: unknown[], tree: StoryTree): void {
       continue;
     }
     if ((tokens.at(-1) as any).type == "paragraph") {
-      tree.passages[header_name].text.push(
-        (tokens.pop() as any).children[0].value
-      );
+      const paragraph = tokens.pop() as any;
+      const value = paragraph.children?.[0]?.value ?? "";
+      tree.passages[header_name].text.push(value);
       continue;
     }
     if ((tokens.at(-1) as any).type == "list") {

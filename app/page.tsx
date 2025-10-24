@@ -43,7 +43,7 @@ const bannerText = `
 Available commands:
 - login : Login and start a new story
 - help : Show this help message
-- inventory : View your inventory
+- inventory : View your inventory (when in a story)
 `;
 
 const sqlKeywords = [
@@ -103,7 +103,7 @@ export default function Home() {
       textLine({
         words: [
           textWord({
-            characters: "\n" + runner?.passageText?.join("\n") + "\n",
+            characters: "\n" + runner?.passageText?.join("\n\n") + "\n",
           }),
         ],
       }),
@@ -184,6 +184,7 @@ export default function Home() {
             words: [textWord({ characters: "\nStory loaded successfully!\n" })],
           }),
         ]);
+        printPassage();
       } catch (error: unknown) {
         let errMessage = "";
         if (error instanceof Error) {
