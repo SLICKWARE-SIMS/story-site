@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocalStorage } from "@uidotdev/usehooks";
+import { useState } from "react";
 
 export interface Inventory {
   credits: number;
@@ -15,10 +16,7 @@ const DEFAULT_INVENTORY: Inventory = {
 };
 
 export function useInventory() {
-  const [inventory, setInventory] = useLocalStorage<Inventory>(
-    INVENTORY_STORAGE_KEY,
-    DEFAULT_INVENTORY
-  );
+  const [inventory, setInventory] = useState<Inventory>(DEFAULT_INVENTORY);
 
   const addCredits = (amount: number) => {
     setInventory((prev) => ({
