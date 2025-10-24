@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Terminal,
-  useEventQueue,
-  textLine,
-  textWord,
-  commandWord,
-} from "crt-terminal";
+import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import styled from "styled-components";
 import { useMemo, useState } from "react";
 import { loadStory } from "./actions";
@@ -14,7 +8,6 @@ import {
   parseStory,
   type Story,
   type Scene,
-  type Choice,
 } from "../stories/parseStoryClient";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
 import { useInventory } from "./hooks/useInventory";
@@ -86,11 +79,10 @@ const resolveBelligerentUser = () => {
 };
 
 export default function Home() {
-  const { data, loading, error } = useGoogleSheet(
+  const { data } = useGoogleSheet(
     "1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg"
   );
   const { inventory } = useInventory();
-  console.log({ data, loading, error });
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
   const [loginStep, setLoginStep] = useState<
@@ -171,7 +163,11 @@ export default function Home() {
 
         // Check access code to determine demo mode
         const isDemoAccess = command.toLowerCase() === "demo";
-        const isFullAccess = ["asdf", ...codes].includes(command.toLowerCase());
+        const codesToCheck =
+          process.env.NODE_ENV === "development" ? ["asdf"] : [];
+        const isFullAccess = [...codesToCheck, ...codes].includes(
+          command.toLowerCase()
+        );
 
         if (!isDemoAccess && !isFullAccess) {
           print([
@@ -248,6 +244,7 @@ export default function Home() {
           );
         }
         print(errArray);
+        console.error(error);
       }
       return;
     }
@@ -369,6 +366,19 @@ export default function Home() {
               ]),
         ]);
         break;
+      case "dev": {
+        if (process.env.NODE_ENV === "development") {
+          setUserName("SomeKittens");
+          setStoryCode("blackMarket");
+          const storyContent = await loadStory("blackMarket");
+          const parsedStory = parseStory(storyContent);
+          setStory(parsedStory);
+
+          setCurrentScene(parsedStory.scenes[0]);
+          printScene(parsedStory.scenes[0]);
+          break;
+        }
+      }
       default:
         print([
           textLine({

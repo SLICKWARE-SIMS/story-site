@@ -5,22 +5,33 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@uidotdev/usehooks": "^2.4.1",
     "crt-terminal": "^1.1.2",
+    "mdx-choose-your-own-adventure": "git@github.com:ttrpg-4-me/mdx-choose-your-own-adventure.git",
     "next": "15.5.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "styled-components": "^6.1.19"
+    "remark": "^15.0.1",
+    "remark-mdx": "^3.1.1",
+    "remark-parse": "^11.0.0",
+    "styled-components": "^6.1.19",
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/styled-components": "^5.1.34",
-    "typescript": "^5"
+    "@vitest/ui": "^4.0.2",
+    "happy-dom": "^20.0.8",
+    "typescript": "^5",
+    "vitest": "^4.0.2"
   },
   "overrides": {
     "crt-terminal": {

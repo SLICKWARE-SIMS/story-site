@@ -1,0 +1,38 @@
+---
+title: Some story
+author: John Doe
+costToRead: 0
+triggers: ["spooky soups", "the great outdoors"]
+---
+
+{inventory.credits = 50}
+
+## Start
+
+You arrive in block. A number of hot food vendors line the bedraggled streets and a few catch your eye...
+
+- <If when={inventory.credits > 1}> 
+    [Buy some soup from the woman with 1 cr](#suprise-soup)
+  </If>
+- <If when={inventory.credits > 100}> 
+    [Buy some really special soup from the woman for 100 cr](#super-suprise-soup)
+  </If>
+- [Do that other thing](#other-thing)
+
+## Suprise Soup
+
+{inventory.credits = inventory.credits - 1}
+
+Great soup!
+Really good
+
+## Super Suprising Soup
+
+{inventory.credits = inventory.credits - 100}
+
+WOW WOW WOW!
+BEST EVER SOUP!
+
+## Other Thing
+
+You do the other thing
