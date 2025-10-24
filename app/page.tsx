@@ -320,6 +320,8 @@ export default function Home() {
       // Make the transition
       runner.transition(choice.header);
 
+      printPassage();
+
       if (runner.isDone) {
         print([
           textLine({
@@ -330,8 +332,6 @@ export default function Home() {
             ],
           }),
         ]);
-      } else {
-        printPassage();
       }
       return;
     }
