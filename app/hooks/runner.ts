@@ -18,7 +18,9 @@ interface CYOARunnerState {
 
 export function useCYOARunner() {
   const [state, setState] = useState<CYOARunnerState>();
+  const [isLoaded, setIsLoaded] = useState(false);
   const loadStoryIntoCYOA = async (storyCode: string) => {
+    setIsLoaded(false);
     const storyContent = await loadStory(storyCode);
 
     // Parse for the CYOA runner
@@ -52,6 +54,7 @@ export function useCYOARunner() {
       currentPassage,
       inventory,
     });
+    setIsLoaded(true);
   };
 
   const transition = useCallback((passageName: string) => {
@@ -100,6 +103,7 @@ export function useCYOARunner() {
   }, [state?.currentPassage, state?.inventory]);
 
   return {
+    isLoaded,
     loadStory: loadStoryIntoCYOA,
     passageText: state?.currentPassage.text,
     isDone: state?.isDone,

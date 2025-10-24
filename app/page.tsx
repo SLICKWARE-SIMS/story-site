@@ -2,9 +2,8 @@
 
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import styled from "styled-components";
-import { useMemo, useState } from "react";
-import { loadStory } from "./actions";
-import { parseMdxToAst, parseTree, type StoryTree } from "../stories/parser";
+import { useEffect, useMemo, useState } from "react";
+import { type StoryTree } from "../stories/parser";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
 import { useCYOARunner } from "./hooks/runner";
 
@@ -85,7 +84,6 @@ export default function Home() {
     null | "name" | "story" | "access"
   >(null);
   const [_userName, setUserName] = useState("");
-  const [storyTree, setStoryTree] = useState<StoryTree | null>(null);
   const [storyCode, setStoryCode] = useState("");
 
   // Use the CYOA runner hook when we have a story tree
@@ -116,10 +114,79 @@ export default function Home() {
     ]);
   };
 
+  useEffect(() => {
+    // if the story wasn't loaded last render
+    // but is loaded now, print the passage
+    if (runner?.isLoaded && !runner?.isDone) {
+      printPassage();
+    }
+  }, [runner?.isLoaded]);
+
   const handleCommand = async (command: string) => {
     if (sqlCheck(command)) {
       return resolveBelligerentUser();
     }
+
+    if (command === "runner") {
+      if (runner && runner.isLoaded) {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `\n=== CYOA Runner State ===`,
+              }),
+            ],
+          }),
+          textLine({
+            words: [
+              textWord({
+                characters: `\nPassage Text:\n${
+                  runner?.passageText?.join("\n") || ""
+                }\n`,
+              }),
+            ],
+          }),
+          textLine({
+            words: [
+              textWord({
+                characters: `\nAvailable Transitions:`,
+              }),
+            ],
+          }),
+          ...runner.transitionOptions.map((option, idx) =>
+            textLine({
+              words: [
+                textWord({
+                  characters: `[${idx + 1}] ${option.text} -> ${option.header}`,
+                }),
+              ],
+            })
+          ),
+          textLine({
+            words: [
+              textWord({
+                characters: `\nStory Complete: ${
+                  runner.isDone ? "Yes" : "No"
+                }\n`,
+              }),
+            ],
+          }),
+        ]);
+        return;
+      } else {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: "No story loaded. Type 'login' to start.",
+              }),
+            ],
+          }),
+        ]);
+        return;
+      }
+    }
+
     if (loginStep === "name") {
       if (command.toLowerCase().includes("beefstink")) {
         return resolveBelligerentUser();
@@ -177,6 +244,7 @@ export default function Home() {
           ]);
           return;
         }
+
         await runner.loadStory(storyCode);
 
         print([
@@ -184,7 +252,7 @@ export default function Home() {
             words: [textWord({ characters: "\nStory loaded successfully!\n" })],
           }),
         ]);
-        printPassage();
+        // printPassage();
       } catch (error: unknown) {
         let errMessage = "";
         if (error instanceof Error) {
@@ -219,7 +287,7 @@ export default function Home() {
       return;
     }
 
-    if (storyTree && !runner.isDone) {
+    if (runner.isLoaded && !runner.isDone) {
       const choiceNum = parseInt(command, 10);
       const choice = runner.transitionOptions[choiceNum - 1];
 
@@ -249,7 +317,6 @@ export default function Home() {
             ],
           }),
         ]);
-        setStoryTree(null);
       } else {
         printPassage();
       }
@@ -278,65 +345,6 @@ export default function Home() {
             ],
           }),
         ]);
-        break;
-      case "runner":
-        if (runner) {
-          print([
-            textLine({
-              words: [
-                textWord({
-                  characters: `\n=== CYOA Runner State ===`,
-                }),
-              ],
-            }),
-            textLine({
-              words: [
-                textWord({
-                  characters: `\nPassage Text:\n${
-                    runner?.passageText?.join("\n") || ""
-                  }\n`,
-                }),
-              ],
-            }),
-            textLine({
-              words: [
-                textWord({
-                  characters: `\nAvailable Transitions:`,
-                }),
-              ],
-            }),
-            ...runner.transitionOptions.map((option, idx) =>
-              textLine({
-                words: [
-                  textWord({
-                    characters: `[${idx + 1}] ${option.text} -> ${
-                      option.header
-                    }`,
-                  }),
-                ],
-              })
-            ),
-            textLine({
-              words: [
-                textWord({
-                  characters: `\nStory Complete: ${
-                    runner.isDone ? "Yes" : "No"
-                  }\n`,
-                }),
-              ],
-            }),
-          ]);
-        } else {
-          print([
-            textLine({
-              words: [
-                textWord({
-                  characters: "No story loaded. Type 'login' to start.",
-                }),
-              ],
-            }),
-          ]);
-        }
         break;
       case "inventory":
         if (runner) {
@@ -386,7 +394,7 @@ export default function Home() {
               words: [textWord({ characters: "\nStory loaded (dev mode)!\n" })],
             }),
           ]);
-          printPassage();
+          // printPassage();
           break;
         }
       }
