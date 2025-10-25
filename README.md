@@ -8,6 +8,10 @@ Listen, we know you can just read through this project and figure most things ou
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Authorship Instructions
+
+If you'd like to contribute a choose your own adventure story to this project then please follow our [Authorship Guidlines](Authorship.md).
+
 ## Getting Started
 
 First, run the development server:
