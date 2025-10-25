@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { type StoryTree } from "../stories/parser";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
 import { useCYOARunner } from "./hooks/runner";
+import { bannerLogo } from "./banner";
 
 const PageContainer = styled.div`
   width: 100vw;
@@ -29,32 +30,13 @@ const PageContainer = styled.div`
 `;
 
 const bannerText = `
-${
-  process.env.NODE_ENV === "development"
-    ? "[DEV BUILD]\n"
-    : `░██     ░██   ░██    ░██████             ░████      ░████   ░█████████ ░███████      ░████   ░██     ░██
-░██     ░██ ░████   ░██   ░██           ░██ ██     ░██ ██   ░██    ░██ ░██   ░██    ░██ ██   ░██     ░██
-░██     ░██   ░██         ░██          ░██  ██    ░██  ██         ░██  ░██    ░██  ░██  ██   ░██     ░██
-░██████████   ░██     ░█████  ░██████ ░██   ██   ░██   ██        ░██   ░██    ░██ ░██   ██   ░██████████
-░██     ░██   ░██         ░██         ░█████████ ░█████████     ░██    ░██    ░██ ░█████████ ░██     ░██
-░██     ░██   ░██   ░██   ░██              ░██        ░██       ░██    ░██   ░██       ░██   ░██     ░██
-░██     ░██ ░██████  ░██████               ░██        ░██       ░██    ░███████        ░██   ░██     ░██
-
-                                                                _
-                                                               | |
-                                 _ __  _ __ ___  ___  ___ _ __ | |_ ___
-                                | '_ \| '__/ _ \/ __|/ _ \ '_ \| __/ __|
-                                | |_) | | |  __/\__ \  __/ | | | |_\__ \_ _ _
-                                | .__/|_|  \___||___/\___|_| |_|\__|___(_|_|_)
-                                | |
-                                |_|
-`
-}
+${bannerLogo}
 
 Available commands:
-- login : Login and start a new story
-- help : Show this help message
-- inventory : View your inventory (when in a story)
+
+- login:        Login and start a new story
+- help:         Show this help message
+- inventory:    View your inventory (when in a story)
 `;
 
 const sqlKeywords = [
