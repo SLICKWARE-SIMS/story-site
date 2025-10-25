@@ -116,6 +116,14 @@ export default function Home() {
     }
   }, [runner?.isLoaded]);
 
+  // Disable autocomplete on the terminal input
+  useEffect(() => {
+    const input = document.querySelector(".crt-terminal input");
+    if (input) {
+      input.setAttribute("autocomplete", "off");
+    }
+  }, []);
+
   const handleCommand = async (command: string) => {
     if (sqlCheck(command)) {
       return resolveBelligerentUser();

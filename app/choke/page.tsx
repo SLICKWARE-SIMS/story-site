@@ -2,7 +2,7 @@
 
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import styled from "styled-components";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useChokeGame } from "./useChokeGame";
 import { bannerLogo } from "../banner";
 
@@ -62,6 +62,13 @@ export default function ChokePage() {
     type: "strength" | null;
     callback: (response: string) => void;
   } | null>(null);
+  // Disable autocomplete on the terminal input
+  useEffect(() => {
+    const input = document.querySelector(".crt-terminal input");
+    if (input) {
+      input.setAttribute("autocomplete", "off");
+    }
+  }, []);
 
   const handleCommand = useCallback(
     (command: string) => {
