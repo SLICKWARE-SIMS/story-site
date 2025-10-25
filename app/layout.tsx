@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SLICKWARE SIMS",
+  title: "H13-447D4H",
   description:
     "The best stories on the Dream, delivered directly to your neurons.",
 };
