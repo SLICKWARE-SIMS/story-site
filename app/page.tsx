@@ -300,6 +300,41 @@ export default function Home() {
         textLine({
           words: [
             textWord({
+              characters: "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - BODY HORROR",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - VIOLENCE",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - ADDICTION",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - DISEASE",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
               characters: "Proceed? (Y/n)",
             }),
           ],
