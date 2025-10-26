@@ -230,9 +230,6 @@ export default function Home() {
     }
 
     if (loginStep === "story") {
-      setStoryCode(command);
-      setLoginStep("hardwareCheck");
-
       if (!(simulations.includes(command))) {
         print([
           textLine({
@@ -244,7 +241,11 @@ export default function Home() {
           }),
         ]);
         setLoginStep("story");
+        return
       }
+
+      setStoryCode(command);
+      setLoginStep("hardwareCheck");
 
 
       print([
