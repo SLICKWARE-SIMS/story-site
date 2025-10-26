@@ -86,12 +86,12 @@ As you approach the makeshift shelter, the old lady beckons you in. ‘Yes, yes,
 
 Do you
 
-- [Try and take the skewered rat roasting on the fire](#daryls-rat)
+- [Try and take the skewered rat roasting on the fire](#darryls-rat)
 - <If when={inventory.infected == 0} >
     [Stop a moment and listen](#listen-to-the-sounds)
   </If>
 - <If when={inventory.infected == 0 && inventory.fingertip > 0} >
-    [Offer \[ITEM 64\] to her (if you do not have this item then do not proceed)](#darryl-offering)
+    [Offer the FINGERTIP to her](#darryl-offering)
   </If>
 - <If when={inventory.infected == 0} >
     [Pull down a sheet and throw it over her](#darryl-sheet)
@@ -100,7 +100,7 @@ Do you
     [Pull down a sheet and throw it on the fire](#sheet-fire)
   </If>
 - <If when={inventory.infected == 0 && inventory.loyaltyCard > 0} >
-    [Use \[ITEM 4\] \- DECODE OF \[TIPX UIJT UP EBSSZM\] Required (Caesar Cipher \+1, decodes to SHOW THIS TO DARRYL)](#showing-loyalty)
+    [Show the LOYALTY CARD to Darryl](#showing-loyalty)
   </If>
 
 ## ONE BOWL OF SOUP, PLEASE
@@ -208,7 +208,7 @@ Do you
 
 {inventory.fingertip = 1}
 
-Determined not to cause offence to the soup lady, you soldier on and despite repeated chewing, decide to swallow the gristley chunk whole, it goes down slowly, but finally your stomach settles and you give a pretend smile of thanks to her. She nods accordingly but looks exasperated. ‘You weren’t meant to eat it but I appreciate the confidence’. She pulls up a small bag of similar fingertips and hands you another one. ‘Now, please don’t eat this, inspect it carefully’. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP \[ITEM 32\] and return to the central area.
+Determined not to cause offence to the soup lady, you soldier on and despite repeated chewing, decide to swallow the gristley chunk whole, it goes down slowly, but finally your stomach settles and you give a pretend smile of thanks to her. She nods accordingly but looks exasperated. ‘You weren’t meant to eat it but I appreciate the confidence’. She pulls up a small bag of similar fingertips and hands you another one. ‘Now, please don’t eat this, inspect it carefully’. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP and return to the central area.
 
 - [Go on](#back-to-the-street)
 
@@ -234,7 +234,7 @@ Do you
 
 {inventory.fingertip = 1}
 
-Determined not to cause offence to the soup lady, you soldier on through the soup and thankfully don’t encounter any more surprises. She nods accordingly, somewhat satisfied. ‘I appreciate the confidence in my food, so I will give you this’. She pulls up a small bag full of similar fingertips and hands you another one. ‘Now, please don’t lose this, they are not cheap. Inspect it carefully if you will’. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP \[ITEM 32\] and return to the central area.
+Determined not to cause offence to the soup lady, you soldier on through the soup and thankfully don’t encounter any more surprises. She nods accordingly, somewhat satisfied. ‘I appreciate the confidence in my food, so I will give you this’. She pulls up a small bag full of similar fingertips and hands you another one. ‘Now, please don’t lose this, they are not cheap. Inspect it carefully if you will’. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP and return to the central area.
 
 - [Go on](#back-to-the-street)
 
@@ -274,7 +274,7 @@ Do you approach
 
 Sensing an opportunity to help someone keen on roasted rat, you shout over to the blind woman. She leaps forth with unnatural swiftness and, tilting her head from side to side for just a second, focuses on the largest rat. She whirls a sling around her head and lets loose a stone that hits it square in the head. She meanders over at a more gentle pace, keenly dodging those in the street and picks up her prize.
 
-She looks at you and then your pocket and reaches in to take out the fingertip. ‘You will want to look more closely at this my dear, do join me later if you can’. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP \[ITEM 32\] and return to the central area.
+She looks at you and then your pocket and reaches in to take out the fingertip. ‘You will want to look more closely at this my dear, do join me later if you can’. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP and return to the central area.
 
 Do you approach
 
@@ -313,7 +313,7 @@ Do you
 
 {inventory.fingertip = 1}
 
-The soup lady appears genuinely touched at the gesture and gets up from her bucket and quickly stashes the squirming rodent underneath it before sitting back down. You sense a certain rapport developing with her. ‘You might want to inspect that fingertip more closely’ she says with a knowing look. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP \[ITEM 32\] and return to the central area.
+The soup lady appears genuinely touched at the gesture and gets up from her bucket and quickly stashes the squirming rodent underneath it before sitting back down. You sense a certain rapport developing with her. ‘You might want to inspect that fingertip more closely’ she says with a knowing look. Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP and return to the central area.
 
 Do you approach
 
@@ -324,7 +324,7 @@ Do you approach
 
 {inventory.rat = 1}
 
-You stuff the soggy cardboard coated rat into your backpack and zip the thing up tight, tying some string around the zippers. You can feel it flipping around in there but after a while it loses energy. Perhaps it might be of some use? Receive the RAT \[ITEM 8\].
+You stuff the soggy cardboard coated rat into your backpack and zip the thing up tight, tying some string around the zippers. You can feel it flipping around in there but after a while it loses energy. Perhaps it might be of some use? You pocket the RAT.
 
 The soup lady nods to you, eyeing up the remnants of what is left on the floor. ‘Well, I hope you enjoyed it’. And looks back down, returning to her smashing.
 
@@ -462,7 +462,7 @@ Do you
 - [Keep going](#try-your-luck)
 - [Pretend to scratch your leg instead and stop a moment and listen](#listen-to-the-sounds)
 - <If when={inventory.infected == 0 && inventory.rat == 1}> 
-    [Pretend to scratch your leg instead and offer \[ITEM 64\] to her if you are \[NOT INFECTED\] (if you do not have this item then do not proceed)](#darryl-offering)
+    [Pretend to scratch your leg instead and offer the FINGERTIP to her](#darryl-offering)
   </If>
 - [Pretend to scratch your leg instead and pull down a sheet and throw it over her](#darryl-sheet)
 - [Pretend to scratch your leg instead and pull down a sheet and throw it on the fire](#sheet-fire)
@@ -475,7 +475,7 @@ Darryl smiles at you.
 
 Do you
 - <If when={inventory.loyaltyCard > 0}> 
-    [Use \[ITEM 4\] \- DECODE OF \[TIPX UIJT UP EBSSZM\] Required](#showing-loyalty)
+    [Use the LOYALTY CARD](#showing-loyalty)
   </If>
 - [Return to the street, approach the soup lady (if you have been there already)](#surprise-soup)
 - [Return to the street, approach the yeast man (if you have not been there already)](#yeast-man)
@@ -491,7 +491,7 @@ Darryl’s face brims with delight as she hears and smells the rodent. ‘Many t
 
 Do you
 - <If when={inventory.loyaltyCard > 0}> 
-    [Show Darryl \[ITEM 4\] if you have understood the message \[TIPX UIJT UP EBSSZM\]](#showing-loyalty)
+    [Show Darryl the LOYALTY CARD if you have understood the message \[TIPX UIJT UP EBSSZM\]](#showing-loyalty)
   </If>
 - [Return to the street with your ambition renewed, approach the soup lady (if you have been there already)](#surprise-soup)
 - [return to the street with your ambition renewed, approach the yeast man (if you have not been there already)](#yeast-man)
@@ -545,7 +545,7 @@ Do you
 
 {inventory.hammer = 1}
 
-You quickly run away and pick up the hammer from the floor, before darting behind another stall. You now have the HAMMER \[ITEM 128\]
+You quickly run away and pick up the hammer from the floor, before darting behind another stall. You now have the HAMMER.
 
 - [Go on](#back-to-the-street)
 
@@ -583,7 +583,7 @@ Do you
 
 {inventory.dentedCan = 1}
 
-You run away from the soup lady picking up the dented can as you go. You now have the DENTED CAN \[ITEM 2\].
+You run away from the soup lady picking up the dented can as you go. You now have the DENTED CAN.
 
 - [Go on](#back-to-the-street)
 
@@ -622,7 +622,7 @@ The soup lady graciously accepts the chunk but gives a wry smile of understandin
 
 The soup lady pulls out a nice clean first aid kit and sterilises her hand with a hidden bottle of alcohol that she gets from under the bucket. After seeing to your wound in a gentle manner, she reaches once again under the bucket and pulls out a bag of finger tips and hands one to you. ‘Don’t worry, they aren’t real, made of rubber, but take a good look’.
 
-Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP \[ITEM 32\] and return to the central area.
+Upon closer inspection you notice it to be a fake rubber fingertip. The fingerprint appears to be a circular code of some type. You take note and receive the FINGERTIP and return to the central area.
 
 - [Go on](#back-to-the-street)
 
@@ -669,7 +669,7 @@ Do you
 {inventory.loyaltyCard = 1}
 {inventory.credits = inventory.credits - 20}
 
-‘Thank you for your custom, you can pick it up tomorrow morning when the batch is fresh. Now that you are a repeat customer please accept this loyalty card’. Please add LOYALTY CARD \[ITEM 4\] to your inventory. You see 9 stamp locations with 2 already marked. But a strange sequence of text is underneath.
+‘Thank you for your custom, you can pick it up tomorrow morning when the batch is fresh. Now that you are a repeat customer please accept this loyalty card’. You slip the LOYALTY CARD into your pocket. You see 9 stamp locations with 2 already marked. But a strange sequence of text is underneath.
 
 TIPX UIJT UP EBSSZM
 
@@ -787,7 +787,16 @@ Sensing that this woman is beyond your skills, you turn around and run out into 
 
 ## SHOWING LOYALTY
 
-Darryl gives a warm smile as she feels for the card that you give her. Her fingers work over the surface and she gives it back to you. ‘This way my friend’ she says as she stands up and pulls back the sheet behind her to reveal a door. ‘If you can gain access that is’.
+Darryl gives a warm smile as she feels for the card that you give her. Her fingers work over the surface as a cracked CRT monitor hums to life. You watch as the letters "TIPX UIJT UP EBSSZM" fade into the screen, then begin to flicker and contort.
+
+TIPX UIJT UP EBSSZM
+QFMU RFGQ RM BYPPWJ
+RGNV SGHR SN CZQQXK
+SHOW THIS TO DARRYL
+
+She hands the card back to you.
+
+‘This way my friend’ she says as she stands up and pulls back the sheet behind her to reveal a door. ‘If you can gain access that is’.
 
 You step towards the door. It is made of thick steel and has a red light in the middle section beneath which is a panel of glass with a blue glowing outline.
 
@@ -796,7 +805,7 @@ Do you
 - [Press your finger to the panel](#finger-press)
 - [Try and push the door open](#push)
 - <If when={inventory.fingertip > 0}> 
-    [Use \[ITEM 32\] to assist you (you must possess this item to use it)](#tip)
+    [Use the FINGERTIP to assist you](#tip)
   </If>
 
 ## SHELTER FROM SHELTER
@@ -814,7 +823,7 @@ Do you
 - [Place your finger on the glass panel](#smokey-finger-press)
 - [Push the door firmly](#smokey-push)
 - <If when={inventory.fingertip > 0}> 
-    [Use \[ITEM 32\] to assist you (you must possess this item to use it)](#smokey-tip)
+    [Use the FINGERTIP to assist you](#smokey-tip)
   </If>
 
 ## FINGER PRESS
@@ -826,7 +835,7 @@ Do you
 - [Try and push the door open](#push)
 - [Give up and return to the street](#darryls-advice)
 - <If when={inventory.fingertip > 0}> 
-    [Use \[ITEM 32\] to assist you (you must possess this item to use it)](#tip)
+    [Use the FINGERTIP to assist you](#tip)
   </If>
 
 ## PUSH
@@ -837,7 +846,7 @@ Do you
 
 - [Give up and return to the street](#darryls-advice)
 - <If when={inventory.fingertip > 0}> 
-    [Use \[ITEM 32\] to assist you (you must possess this item to use it)](#tip)
+    [Use the FINGERTIP to assist you](#tip)
   </If>
 
 ## TIP
