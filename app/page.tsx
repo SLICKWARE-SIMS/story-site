@@ -35,6 +35,7 @@ ${bannerLogo}
 Available commands:
 
 - login:        Login and start a new story
+- demo:         Start demo mode (limited actions)
 - help:         Show this help message
 - inventory:    View your inventory (when in a story)
 `;
@@ -68,19 +69,22 @@ const resolveBelligerentUser = () => {
   );
 };
 
-function getInventoryDisplayText(inventory: Record<string, unknown> | undefined) {
+function getInventoryDisplayText(
+  inventory: Record<string, unknown> | undefined
+) {
   if (inventory === undefined) {
-    return ["  Empty"]
+    return ["  Empty"];
   }
-  const displayText = []
+  const displayText = [];
   for (const [key, value] of Object.entries(inventory)) {
     if (value) {
-      displayText.push(`  ${key}: ${value}`)
+      displayText.push(`  ${key}: ${value}`);
     }
   }
-  return displayText
+  return displayText;
 }
 
+const MAX_DEMO_ACTIONS = 10;
 export default function Home() {
   const { data } = useGoogleSheet(
     "1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg"
@@ -92,6 +96,8 @@ export default function Home() {
   >(null);
   const [_userName, setUserName] = useState("");
   const [storyCode, setStoryCode] = useState("");
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [actionCount, setActionCount] = useState(0);
 
   // Use the CYOA runner hook when we have a story tree
   const runner = useCYOARunner();
@@ -140,6 +146,24 @@ export default function Home() {
   const handleCommand = async (command: string) => {
     if (sqlCheck(command)) {
       return resolveBelligerentUser();
+    }
+
+    if (command === "demo") {
+      setIsDemoMode(true);
+      setActionCount(0);
+
+      await runner.loadStory("blackMarket");
+
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: `Demo mode activated. You have ${MAX_DEMO_ACTIONS} actions.`,
+            }),
+          ],
+        }),
+      ]);
+      return;
     }
 
     if (command === "runner") {
@@ -267,7 +291,18 @@ export default function Home() {
             words: [textWord({ characters: "\nStory loaded successfully!\n" })],
           }),
         ]);
-        // printPassage();
+
+        if (isDemoMode) {
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: `[Demo mode: You have ${MAX_DEMO_ACTIONS} actions]`,
+                }),
+              ],
+            }),
+          ]);
+        }
       } catch (error: unknown) {
         let errMessage = "";
         if (error instanceof Error) {
@@ -303,15 +338,15 @@ export default function Home() {
     }
 
     if (runner.isLoaded && !runner.isDone) {
-
       if (command == "inventory") {
         print([
           textLine({
             words: getInventoryDisplayText(runner.inventory).map(
-              displayText => textWord({
-                characters: displayText,
-              })
-            )
+              (displayText) =>
+                textWord({
+                  characters: displayText,
+                })
+            ),
           }),
         ]);
         return;
@@ -335,6 +370,34 @@ export default function Home() {
 
       // Make the transition
       runner.transition(choice.header);
+      if (isDemoMode) {
+        const newActionCount = actionCount + 1;
+        setActionCount(Math.min(newActionCount, MAX_DEMO_ACTIONS));
+        if (newActionCount < MAX_DEMO_ACTIONS) {
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: `[Demo mode: You have ${
+                    MAX_DEMO_ACTIONS - newActionCount
+                  } actions remaining]`,
+                }),
+              ],
+            }),
+          ]);
+        } else {
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: `You have reached the end of the demo content.  Please purchase an access code to continue.`,
+                }),
+              ],
+            }),
+          ]);
+          return;
+        }
+      }
 
       printPassage();
 
