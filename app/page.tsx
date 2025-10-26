@@ -159,10 +159,9 @@ export default function Home() {
     }
 
     if (command === "demo") {
+      setLoginStep("story");
       setIsDemoMode(true);
       setActionCount(0);
-
-      await runner.loadStory("blackMarket");
 
       print([
         textLine({
@@ -173,6 +172,29 @@ export default function Home() {
           ],
         }),
       ]);
+
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: "Choose a Simulation™",
+            }),
+          ],
+        }),
+      ]);
+
+      simulations.forEach( (simulation) => {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `  - ${simulation}`,
+              }),
+            ],
+          }),
+        ]);
+      })
+
       return;
     }
 
@@ -249,7 +271,6 @@ export default function Home() {
           words: [textWord({ characters: "\nSimulation™ loaded successfully!\n" })],
         }),
       ]);
-      printPassage();
       return
     }
 
