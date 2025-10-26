@@ -3,7 +3,6 @@
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import styled from "styled-components";
 import { useEffect, useMemo, useState } from "react";
-import { type StoryTree } from "../stories/parser";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
 import { useCYOARunner } from "./hooks/runner";
 import { bannerLogo } from "./banner";
@@ -96,26 +95,24 @@ export default function Home() {
   >(null);
   const [_userName, setUserName] = useState("");
   const [storyCode, setStoryCode] = useState("");
-  const simulations = ["blackMarket"]
+  const simulations = ["blackMarket"];
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [actionCount, setActionCount] = useState(0);
 
   // Use the CYOA runner hook when we have a story tree
   const runner = useCYOARunner();
 
-  const codes = useMemo(() => {
-    if (!data) return [];
-    return data.map((row) => row["6 Character"]);
+  const accessCodeToName = useMemo(() => {
+    if (!data) return new Map();
+
+    return data.reduce((acc, row) => {
+      if ("DISCORD" in row && row["DISCORD"]) {
+        acc.set(row["6 Character"].toString(), row["DISCORD"]);
+        acc.set(row["SHA-256 Serial"].toString(), row["DISCORD"]);
+      }
+      return acc;
+    }, new Map());
   }, [data]);
-
-  const accessCodeToName = new Map();
-
-  data.forEach(function f(row) {
-    if ("DISCORD" in row && row["DISCORD"]){
-      accessCodeToName.set(row["6 Character"].toString(), row["DISCORD"])
-      accessCodeToName.set(row["SHA-256 Serial"].toString(), row["DISCORD"])
-    }
-  })
 
   const printPassage = () => {
     if (!runner) return;
@@ -183,7 +180,7 @@ export default function Home() {
         }),
       ]);
 
-      simulations.forEach( (simulation) => {
+      simulations.forEach((simulation) => {
         print([
           textLine({
             words: [
@@ -193,7 +190,7 @@ export default function Home() {
             ],
           }),
         ]);
-      })
+      });
 
       return;
     }
@@ -261,21 +258,23 @@ export default function Home() {
     if (loginStep === "hardwareCheck") {
       setLoginStep(null);
       if (!command.toLowerCase().includes("y")) {
-        return
+        return;
       }
 
       await runner.loadStory(storyCode);
 
       print([
         textLine({
-          words: [textWord({ characters: "\nSimulation™ loaded successfully!\n" })],
+          words: [
+            textWord({ characters: "\nSimulation™ loaded successfully!\n" }),
+          ],
         }),
       ]);
-      return
+      return;
     }
 
     if (loginStep === "story") {
-      if (!(simulations.includes(command))) {
+      if (!simulations.includes(command)) {
         print([
           textLine({
             words: [
@@ -286,12 +285,11 @@ export default function Home() {
           }),
         ]);
         setLoginStep("story");
-        return
+        return;
       }
 
       setStoryCode(command);
       setLoginStep("hardwareCheck");
-
 
       print([
         textLine({
@@ -314,14 +312,16 @@ export default function Home() {
         textLine({
           words: [
             textWord({
-              characters: "A text interface will be provided for debugging purposes.",
+              characters:
+                "A text interface will be provided for debugging purposes.",
             }),
           ],
         }),
         textLine({
           words: [
             textWord({
-              characters: "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
+              characters:
+                "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
             }),
           ],
         }),
@@ -362,7 +362,7 @@ export default function Home() {
         }),
       ]);
 
-      return
+      return;
     }
 
     if (loginStep === "access") {
@@ -371,20 +371,21 @@ export default function Home() {
         // Check access code
         const codesToCheck =
           process.env.NODE_ENV === "development" ? ["asdf"] : [];
-        const isFullAccess = [...codesToCheck, ...Array.from(accessCodeToName.keys())].includes(
-          command.toLowerCase()
-        );
-        setStoryCode("blackMarket")
+        const isFullAccess = [
+          ...codesToCheck,
+          ...Array.from(accessCodeToName.keys()),
+        ].includes(command.toLowerCase());
+        setStoryCode("blackMarket");
 
         print([
-            textLine({
-              words: [
-                textWord({
-                  characters: `AUTHENTICATING`,
-                }),
-              ],
-            }),
-          ]);
+          textLine({
+            words: [
+              textWord({
+                characters: `AUTHENTICATING`,
+              }),
+            ],
+          }),
+        ]);
 
         if (!isFullAccess) {
           print([
@@ -399,57 +400,44 @@ export default function Home() {
           return;
         }
 
-        const name = accessCodeToName.get(command)
+        const name = accessCodeToName.get(command);
         if (name.includes("beefstink")) {
           return resolveBelligerentUser();
         }
 
         print([
-            textLine({
-              words: [
-                textWord({
-                  characters: `Welcome ${name}`,
-                }),
-              ],
-            }),
-          ]);
-
-      print([
-        textLine({
-          words: [
-            textWord({
-              characters: "Choose a Simulation™",
-            }),
-          ],
-        }),
-      ]);
-
-      simulations.forEach( (simulation) => {
-        print([
           textLine({
             words: [
               textWord({
-                characters: `  - ${simulation}`,
+                characters: `Welcome ${name}`,
               }),
             ],
           }),
         ]);
-      })
 
-      return
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: "Choose a Simulation™",
+              }),
+            ],
+          }),
+        ]);
 
-
-        if (isDemoMode) {
+        simulations.forEach((simulation) => {
           print([
             textLine({
               words: [
                 textWord({
-                  characters: `[Demo mode: You have ${MAX_DEMO_ACTIONS} actions]`,
+                  characters: `  - ${simulation}`,
                 }),
               ],
             }),
           ]);
-        }
+        });
+
+        return;
       } catch (error: unknown) {
         let errMessage = "";
         if (error instanceof Error) {
