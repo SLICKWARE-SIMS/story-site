@@ -137,6 +137,18 @@ export function parseTree(ast: ReturnType<typeof parseMdxToAst>): StoryTree {
   while (tokens.length > 0) {
     parsePassage(tokens, tree);
   }
+  console.log("tree: ", tree);
+
+  const passageNames = Object.keys(tree.passages);
+  Object.values(tree.passages).forEach((passage, index) => {
+    passage.transitions.forEach((transition) => {
+      if (!passageNames.includes(transition.header)) {
+        throw new Error(
+          `Transition to non-existing passage: ${transition.header}`
+        );
+      }
+    });
+  });
 
   return tree;
 }
