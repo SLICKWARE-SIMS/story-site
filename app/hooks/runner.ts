@@ -18,9 +18,15 @@ interface CYOARunnerState {
 
 type TransitionCriteriaFunction = (inventory: object) => boolean;
 
-function isValidTransition(criteria: string, inventory: Record<string, unknown>): boolean {
-  const validatorFunction = new Function("inventory", `return Boolean(${criteria})`) as TransitionCriteriaFunction
-  return validatorFunction(inventory)
+function isValidTransition(
+  criteria: string,
+  inventory: Record<string, unknown>
+): boolean {
+  const validatorFunction = new Function(
+    "inventory",
+    `return Boolean(${criteria})`
+  ) as TransitionCriteriaFunction;
+  return validatorFunction(inventory);
 }
 
 export function useCYOARunner() {
@@ -114,11 +120,15 @@ export function useCYOARunner() {
         return stateRef.current.currentPassage.transitions.filter(function (
           transition: Transition
         ) {
-          console.log(transition)
-          if (transition.transitionCriteria === null || transition.transitionCriteria === undefined || inventory === undefined || inventory === null) {
-            return true
+          if (
+            transition.transitionCriteria === null ||
+            transition.transitionCriteria === undefined ||
+            inventory === undefined ||
+            inventory === null
+          ) {
+            return true;
           }
-          return isValidTransition(transition.transitionCriteria, inventory)
+          return isValidTransition(transition.transitionCriteria, inventory);
         });
       },
       get passageName() {
