@@ -21,7 +21,7 @@ By H13-447D4H
 
 STORY by dmgCTRL
 
-LOGIC by Jerome Stanforth & ROUTER
+LOGIC by Jerome Stanforth & R0U73R
 
 Progress: LOADING \[||||||||||||||||||||||||||||\] \[100%\]
 
@@ -90,7 +90,7 @@ Do you
 - <If when={inventory.infected == 0} >
     [Stop a moment and listen](#listen-to-the-sounds)
   </If>
-- <If when={inventory.infected == 0} >
+- <If when={inventory.infected == 0 && inventory.fingertip > 0} >
     [Offer \[ITEM 64\] to her (if you do not have this item then do not proceed)](#darryl-offering)
   </If>
 - <If when={inventory.infected == 0} >
@@ -99,8 +99,8 @@ Do you
 - <If when={inventory.infected == 0} >
     [Pull down a sheet and throw it on the fire](#sheet-fire)
   </If>
-- <If when={inventory.infected == 0} >
-    [Use \[ITEM 4\] \- DECODE OF \[TIPX UIJT UP EBSSZM\] Required (Caesar Cipher \+1, decodes to SHOW THIS TO DARRYL)](#look-away)
+- <If when={inventory.infected == 0 && inventory.loyaltyCard > 0} >
+    [Use \[ITEM 4\] \- DECODE OF \[TIPX UIJT UP EBSSZM\] Required (Caesar Cipher \+1, decodes to SHOW THIS TO DARRYL)](#showing-loyalty)
   </If>
 
 ## ONE BOWL OF SOUP, PLEASE
@@ -109,7 +109,9 @@ The lady promptly puts down her hammer and scoops the soup with her hands into a
 
 Do you
 
-- [Pay for the soup](#pay-for-the-soup)
+- <If when={inventory.credits >= 1} >
+    [Pay for the soup](#pay-for-the-soup)
+  </If>
 - [Grab the soup and run away](#steal-the-soup)
 - [Kindly decline the offer and walk away, you no longer feel hungry](#reject-the-soup)
 
@@ -411,7 +413,9 @@ Do you
 
 Do you
 
-- [Buy some more porridge for 20cr](#loyalty)
+- <If when={inventory.credits >= 20} >
+    [Buy some more porridge for 20cr](#loyalty)
+  </If>
 - [Resist the urges](#resist-temptation)
 
 ## RESIST TEMPTATION
@@ -420,7 +424,9 @@ The man sees you struggling. ‘Alas, I know all too well the temptations of the
 
 Do you
 
-- [Buy the brew or the porridge from him for 20cr](#loyalty)
+- <If when={inventory.credits >= 20} >
+    [Buy the brew or the porridge from him for 20cr](#loyalty)
+  </If>
 - [Firmly decline the offer](#no-thanks)
 
 ## NO THANKS
@@ -465,13 +471,7 @@ Do you
 
 You stop for a second of calm and open your ears. You hear faint noises coming from behind the sheet at the back of the shelter. ‘We have been expecting you. Perhaps what you seek is near, but are you ready yet?’
 
-You may
-
-- [Use \[ITEM 4\] \- DECODE OF \[TIPX UIJT UP EBSSZM\] Required](#showing-loyalty)
-
-If you do not yet have this item then Darryl smiles at you. ‘Come back at any time’
-
-You return to the street
+Darryl smiles at you.
 
 Do you
 - <If when={inventory.loyaltyCard > 0}> 
@@ -561,7 +561,9 @@ The lady promptly puts down her hammer, smiles unnervingly, and scoops the soup 
 
 Do you
 
-- [Pay 10cr for the soup](#pay-for-the-soup)
+- <If when={inventory.credits >= 10}> 
+    [Pay 10cr for the soup](#pay-for-the-expensive-soup)
+  </If>
 - [Grab the soup and run away](#steal-the-soup)
 - [Kindly decline the offer and walk away](#reject-the-soup)
 
