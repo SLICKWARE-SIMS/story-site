@@ -16,6 +16,13 @@ interface CYOARunnerState {
   inventory: Record<string, unknown>;
 }
 
+type TransitionCriteriaFunction = (inventory: object) => boolean;
+
+function isValidTransition(criteria: string, inventory: Record<string, unknown>): boolean {
+  const validatorFunction = new Function("inventory", `return Boolean(${criteria})`) as TransitionCriteriaFunction
+  return validatorFunction(inventory)
+}
+
 export function useCYOARunner() {
   const stateRef = useRef<CYOARunnerState | undefined>(undefined);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -107,14 +114,11 @@ export function useCYOARunner() {
         return stateRef.current.currentPassage.transitions.filter(function (
           transition: Transition
         ) {
-          const transitionCopy = { ...transition };
-          if (transitionCopy.transitionCriteria !== null) {
-            // eslint-disable-next-line no-eval
-            transitionCopy.isValid = eval(transitionCopy.transitionCriteria);
-          } else {
-            transitionCopy.isValid = true;
+          console.log(transition)
+          if (transition.transitionCriteria === null || transition.transitionCriteria === undefined || inventory === undefined || inventory === null) {
+            return true
           }
-          return transitionCopy;
+          return isValidTransition(transition.transitionCriteria, inventory)
         });
       },
       get passageName() {
