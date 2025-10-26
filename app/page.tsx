@@ -159,10 +159,9 @@ export default function Home() {
     }
 
     if (command === "demo") {
+      setLoginStep("story");
       setIsDemoMode(true);
       setActionCount(0);
-
-      await runner.loadStory("blackMarket");
 
       print([
         textLine({
@@ -173,6 +172,29 @@ export default function Home() {
           ],
         }),
       ]);
+
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: "Choose a Simulation™",
+            }),
+          ],
+        }),
+      ]);
+
+      simulations.forEach( (simulation) => {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `  - ${simulation}`,
+              }),
+            ],
+          }),
+        ]);
+      })
+
       return;
     }
 
@@ -249,7 +271,6 @@ export default function Home() {
           words: [textWord({ characters: "\nSimulation™ loaded successfully!\n" })],
         }),
       ]);
-      printPassage();
       return
     }
 
@@ -294,6 +315,41 @@ export default function Home() {
           words: [
             textWord({
               characters: "A text interface will be provided for debugging purposes.",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - BODY HORROR",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - VIOLENCE",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - ADDICTION",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "  - DISEASE",
             }),
           ],
         }),
