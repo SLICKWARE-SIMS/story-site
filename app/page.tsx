@@ -88,10 +88,11 @@ export default function Home() {
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
   const [loginStep, setLoginStep] = useState<
-    null | "name" | "story" | "access"
+    null | "story" | "access" | "hardwareCheck"
   >(null);
   const [_userName, setUserName] = useState("");
   const [storyCode, setStoryCode] = useState("");
+  const simulations = ["blackMarket"]
 
   // Use the CYOA runner hook when we have a story tree
   const runner = useCYOARunner();
@@ -100,6 +101,15 @@ export default function Home() {
     if (!data) return [];
     return data.map((row) => row["6 Character"]);
   }, [data]);
+
+  const accessCodeToName = new Map();
+
+  data.forEach(function f(row) {
+    if ("DISCORD" in row && row["DISCORD"]){
+      accessCodeToName.set(row["6 Character"].toString(), row["DISCORD"])
+      accessCodeToName.set(row["SHA-256 Serial"].toString(), row["DISCORD"])
+    }
+  })
 
   const printPassage = () => {
     if (!runner) return;
@@ -202,50 +212,98 @@ export default function Home() {
       }
     }
 
-    if (loginStep === "name") {
-      if (command.toLowerCase().includes("beefstink")) {
-        return resolveBelligerentUser();
+    if (loginStep === "hardwareCheck") {
+      setLoginStep(null);
+      if (!command.toLowerCase().includes("y")) {
+        return
       }
-      setUserName(command);
-      setLoginStep("story");
+
+      await runner.loadStory(storyCode);
+
       print([
         textLine({
-          words: [
-            textWord({
-              characters: `Welcome, ${command}! Please enter your story code:`,
-            }),
-          ],
+          words: [textWord({ characters: "\nSimulation™ loaded successfully!\n" })],
         }),
       ]);
-      return;
+      printPassage();
+      return
     }
 
     if (loginStep === "story") {
-      // TODO: some validation of story code
-      // right now there's just one story
       setStoryCode(command);
-      setLoginStep("access");
+      setLoginStep("hardwareCheck");
+
+      if (!(simulations.includes(command))) {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: "Invalid simulation code. Type again.",
+              }),
+            ],
+          }),
+        ]);
+        setLoginStep("story");
+      }
+
+
       print([
         textLine({
           words: [
             textWord({
-              characters: "Now enter your access code:",
+              characters: "Beginning Simulation™...",
             }),
           ],
         }),
       ]);
-      return;
+
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: "ERROR: SLICKWARE NOT DETECTED",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "A text interface will be provided for debugging purposes.",
+            }),
+          ],
+        }),
+        textLine({
+          words: [
+            textWord({
+              characters: "Proceed? (Y/n)",
+            }),
+          ],
+        }),
+      ]);
+
+      return
     }
 
     if (loginStep === "access") {
-      setLoginStep(null);
+      setLoginStep("story");
       try {
         // Check access code
         const codesToCheck =
           process.env.NODE_ENV === "development" ? ["asdf"] : [];
-        const isFullAccess = [...codesToCheck, ...codes].includes(
+        const isFullAccess = [...codesToCheck, ...Array.from(accessCodeToName.keys())].includes(
           command.toLowerCase()
         );
+        setStoryCode("blackMarket")
+
+        print([
+            textLine({
+              words: [
+                textWord({
+                  characters: `AUTHENTICATING`,
+                }),
+              ],
+            }),
+          ]);
 
         if (!isFullAccess) {
           print([
@@ -260,14 +318,45 @@ export default function Home() {
           return;
         }
 
-        await runner.loadStory(storyCode);
+        const name = accessCodeToName.get(command)
+        if (name.includes("beefstink")) {
+          return resolveBelligerentUser();
+        }
 
         print([
+            textLine({
+              words: [
+                textWord({
+                  characters: `Welcome ${name}`,
+                }),
+              ],
+            }),
+          ]);
+
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: "Choose a Simulation™",
+            }),
+          ],
+        }),
+      ]);
+
+      simulations.forEach( (simulation) => {
+        print([
           textLine({
-            words: [textWord({ characters: "\nStory loaded successfully!\n" })],
+            words: [
+              textWord({
+                characters: `  - ${simulation}`,
+              }),
+            ],
           }),
         ]);
-        // printPassage();
+      })
+
+      return
+
       } catch (error: unknown) {
         let errMessage = "";
         if (error instanceof Error) {
@@ -354,10 +443,10 @@ export default function Home() {
 
     switch (command.toLowerCase()) {
       case "login":
-        setLoginStep("name");
+        setLoginStep("access");
         print([
           textLine({
-            words: [textWord({ characters: "Please enter your name:" })],
+            words: [textWord({ characters: "Please enter your credentials:" })],
           }),
         ]);
         break;
