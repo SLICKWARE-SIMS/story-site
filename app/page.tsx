@@ -68,6 +68,19 @@ const resolveBelligerentUser = () => {
   );
 };
 
+function getInventoryDisplayText(inventory: Record<string, unknown> | undefined) {
+  if (inventory === undefined) {
+    return ["  Empty"]
+  }
+  const displayText = []
+  for (const [key, value] of Object.entries(inventory)) {
+    if (value) {
+      displayText.push(`  ${key}: ${value}`)
+    }
+  }
+  return displayText
+}
+
 export default function Home() {
   const { data } = useGoogleSheet(
     "1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg"
@@ -290,6 +303,20 @@ export default function Home() {
     }
 
     if (runner.isLoaded && !runner.isDone) {
+
+      if (command == "inventory") {
+        print([
+          textLine({
+            words: getInventoryDisplayText(runner.inventory).map(
+              displayText => textWord({
+                characters: displayText,
+              })
+            )
+          }),
+        ]);
+        return;
+      }
+
       const choiceNum = parseInt(command, 10);
       const choice = runner.transitionOptions[choiceNum - 1];
 
