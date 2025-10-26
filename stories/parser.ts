@@ -62,7 +62,7 @@ function parseTransition(transition: any): Transition {
   if (!scriptTypes.includes(transition.children[0].type)) {
     return {
       transitionCriteria: null,
-      header: transition.children[0].children[0].url,
+      header: transition.children[0].children[0].url.toLowerCase(),
       text: transition.children[0].children[0].children[0].value,
     };
   }
@@ -139,11 +139,10 @@ export function parseTree(ast: ReturnType<typeof parseMdxToAst>): StoryTree {
   }
   console.log("tree: ", tree);
 
-  const passageNames = Object.keys(tree.passages);
   Object.values(tree.passages).forEach((passage, index) => {
     passage.transitions.forEach((transition) => {
-      if (!passageNames.includes(transition.header)) {
-        throw new Error(
+      if (!(transition.header in tree.passages )) {
+        throw new ReferenceError(
           `Transition to non-existing passage: ${transition.header}`
         );
       }

@@ -172,7 +172,7 @@ Third scene.
       expect(result.scenes[2].title).toBe("GAMMA");
     });
 
-    it("should ignore choices with invalid/missing targets", () => {
+    it("should raise an error when parsing choices with invalid/missing targets", () => {
       const mdx = `## INTRO
 
 Test.
@@ -189,10 +189,10 @@ Scene with bad links.
 The end.
 `;
 
-      const result = parseStory(mdx);
+      expect(() => {
+        parseStory(mdx);
+      }).toThrow(ReferenceError)
 
-      expect(result.scenes[0].choices).toEqual([{ id: 2, text: "Valid link" }]);
-      expect(result.scenes[0].choices).toHaveLength(1);
     });
 
     it("should handle scenes with no choices", () => {
