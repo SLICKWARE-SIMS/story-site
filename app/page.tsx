@@ -4,7 +4,7 @@ import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import styled from "styled-components";
 import { useEffect, useMemo, useState } from "react";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
-import { useCYOARunner } from "./hooks/runner";
+import { useCYOARunner, getAllStoryMetadata } from "./hooks/runner";
 import { bannerLogo } from "./banner";
 
 const PageContainer = styled.div`
@@ -95,7 +95,6 @@ export default function Home() {
   >(null);
   const [_userName, setUserName] = useState("");
   const [storyCode, setStoryCode] = useState("");
-  const simulations = ["blackMarket"];
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [actionCount, setActionCount] = useState(0);
 
@@ -179,8 +178,9 @@ export default function Home() {
           ],
         }),
       ]);
+      const metadata = await getAllStoryMetadata()
 
-      simulations.forEach((simulation) => {
+      Object.keys(metadata).forEach((simulation) => {
         print([
           textLine({
             words: [
@@ -274,7 +274,8 @@ export default function Home() {
     }
 
     if (loginStep === "story") {
-      if (!simulations.includes(command)) {
+      const metadata = await getAllStoryMetadata()
+      if (!(command in metadata)) {
         print([
           textLine({
             words: [
@@ -299,9 +300,6 @@ export default function Home() {
             }),
           ],
         }),
-      ]);
-
-      print([
         textLine({
           words: [
             textWord({
@@ -317,42 +315,38 @@ export default function Home() {
             }),
           ],
         }),
-        textLine({
-          words: [
-            textWord({
-              characters:
-                "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
-            }),
-          ],
-        }),
-        textLine({
-          words: [
-            textWord({
-              characters: "  - BODY HORROR",
-            }),
-          ],
-        }),
-        textLine({
-          words: [
-            textWord({
-              characters: "  - VIOLENCE",
-            }),
-          ],
-        }),
-        textLine({
-          words: [
-            textWord({
-              characters: "  - ADDICTION",
-            }),
-          ],
-        }),
-        textLine({
-          words: [
-            textWord({
-              characters: "  - DISEASE",
-            }),
-          ],
-        }),
+      ]);
+
+      
+      const triggers = (metadata[command] || []).triggers
+      if (triggers && Array.isArray(triggers)) {
+        console.log(triggers)
+
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
+              }),
+            ],
+          }),
+        ])
+
+        triggers.forEach(trigger => {
+          print([
+          textLine({
+            words: [
+              textWord({
+                characters: `  - ${trigger}`,
+              }),
+            ],
+          }),
+        ])
+        });
+
+      }
+
+      print([
         textLine({
           words: [
             textWord({
@@ -360,7 +354,7 @@ export default function Home() {
             }),
           ],
         }),
-      ]);
+      ])
 
       return;
     }
@@ -425,17 +419,18 @@ export default function Home() {
           }),
         ]);
 
-        simulations.forEach((simulation) => {
-          print([
-            textLine({
-              words: [
-                textWord({
-                  characters: `  - ${simulation}`,
-                }),
-              ],
-            }),
-          ]);
-        });
+        const metadata = await getAllStoryMetadata()
+        Object.keys(metadata).forEach((simulation) => {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `  - ${simulation}`,
+              }),
+            ],
+          }),
+        ]);
+      });
 
         return;
       } catch (error: unknown) {

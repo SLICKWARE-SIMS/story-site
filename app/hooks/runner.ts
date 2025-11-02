@@ -6,7 +6,7 @@ import {
   StoryTree,
   Transition,
 } from "../../stories/parser";
-import { loadStory } from "../actions";
+import { loadStory, getAllStoryCodes } from "../actions";
 
 interface CYOARunnerState {
   representation: StoryTree;
@@ -27,6 +27,22 @@ function isValidTransition(
     `return Boolean(${criteria})`
   ) as TransitionCriteriaFunction;
   return validatorFunction(inventory);
+}
+
+type MetaData = {
+  [key: string]: Record<string, unknown>
+} 
+
+export async function getAllStoryMetadata() {
+  const storyCodes = await getAllStoryCodes();
+  const storyMetadata: MetaData = {}
+  for (const code of storyCodes) {
+    const storyContent = await loadStory(code)
+    const metaData: Record<string, unknown> = parseTree(parseMdxToAst(storyContent)).metaData || {}
+    storyMetadata[code] = metaData
+  }
+  return storyMetadata
+
 }
 
 export function useCYOARunner() {
