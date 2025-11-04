@@ -15,9 +15,11 @@ export async function loadStory(storyCode: string): Promise<string> {
 }
 
 export async function getAllStoryCodes(): Promise<Array<string>> {
-  const storyDir = path.join(process.cwd(), "stories")
-  const fileNames = await fs.readdir(storyDir)
-  return fileNames.filter( function(fileName) {return fileName.endsWith(".mdx") && fileName != "example.mdx" }).map(
-    storyFileName => storyFileName.slice(0,-4)
-  )
+  const storyDir = path.join(process.cwd(), "stories");
+  const fileNames = await fs.readdir(storyDir);
+  return fileNames
+    .filter(function (fileName) {
+      return fileName.endsWith(".mdx") && fileName != "example.mdx";
+    })
+    .map((storyFileName) => storyFileName.slice(0, -4));
 }

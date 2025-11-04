@@ -178,7 +178,7 @@ export default function Home() {
           ],
         }),
       ]);
-      const metadata = await getAllStoryMetadata()
+      const metadata = await getAllStoryMetadata();
 
       Object.keys(metadata).forEach((simulation) => {
         print([
@@ -274,7 +274,7 @@ export default function Home() {
     }
 
     if (loginStep === "story") {
-      const metadata = await getAllStoryMetadata()
+      const metadata = await getAllStoryMetadata();
       if (!(command in metadata)) {
         print([
           textLine({
@@ -318,32 +318,30 @@ export default function Home() {
       ]);
 
       
-      const triggers = (metadata[command] || []).triggers
+      const triggers = (metadata[command] || []).triggers;
       if (triggers && Array.isArray(triggers)) {
-        console.log(triggers)
-
         print([
           textLine({
             words: [
               textWord({
-                characters: "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
+                characters:
+                  "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
               }),
             ],
           }),
-        ])
+        ]);
 
-        triggers.forEach(trigger => {
+        triggers.forEach((trigger) => {
           print([
-          textLine({
-            words: [
-              textWord({
-                characters: `  - ${trigger}`,
-              }),
-            ],
-          }),
-        ])
+            textLine({
+              words: [
+                textWord({
+                  characters: `  - ${trigger}`,
+                }),
+              ],
+            }),
+          ]);
         });
-
       }
 
       print([
@@ -354,7 +352,7 @@ export default function Home() {
             }),
           ],
         }),
-      ])
+      ]);
 
       return;
     }
@@ -419,18 +417,18 @@ export default function Home() {
           }),
         ]);
 
-        const metadata = await getAllStoryMetadata()
+        const metadata = await getAllStoryMetadata();
         Object.keys(metadata).forEach((simulation) => {
-        print([
-          textLine({
-            words: [
-              textWord({
-                characters: `  - ${simulation}`,
-              }),
-            ],
-          }),
-        ]);
-      });
+          print([
+            textLine({
+              words: [
+                textWord({
+                  characters: `  - ${simulation}`,
+                }),
+              ],
+            }),
+          ]);
+        });
 
         return;
       } catch (error: unknown) {

@@ -30,19 +30,19 @@ function isValidTransition(
 }
 
 type MetaData = {
-  [key: string]: Record<string, unknown>
-} 
+  [key: string]: Record<string, unknown>;
+};
 
 export async function getAllStoryMetadata() {
   const storyCodes = await getAllStoryCodes();
-  const storyMetadata: MetaData = {}
+  const storyMetadata: MetaData = {};
   for (const code of storyCodes) {
-    const storyContent = await loadStory(code)
-    const metaData: Record<string, unknown> = parseTree(parseMdxToAst(storyContent)).metaData || {}
-    storyMetadata[code] = metaData
+    const storyContent = await loadStory(code);
+    const metaData: Record<string, unknown> =
+      parseTree(parseMdxToAst(storyContent)).metaData || {};
+    storyMetadata[code] = metaData;
   }
-  return storyMetadata
-
+  return storyMetadata;
 }
 
 export function useCYOARunner() {
