@@ -12,21 +12,21 @@ triggers: ["spooky soups", "the great outdoors"]
 You arrive in block. A number of hot food vendors line the bedraggled streets and a few catch your eye...
 
 - <If when={inventory.credits > 1}> 
-    [Buy some soup from the woman with 1 cr](#suprise-soup)
+    [Buy some soup from the woman with 1 cr](#surprise-soup)
   </If>
 - <If when={inventory.credits > 100}> 
-    [Buy some really special soup from the woman for 100 cr](#super-suprise-soup)
+    [Buy some really special soup from the woman for 100 cr](#super-surprise-soup)
   </If>
 - [Do that other thing](#other-thing)
 
-## Suprise Soup
+## Surprise Soup
 
 {inventory.credits = inventory.credits - 1}
 
 Great soup!
 Really good
 
-## Super Suprising Soup
+## Super Surprise Soup
 
 {inventory.credits = inventory.credits - 100}
 
