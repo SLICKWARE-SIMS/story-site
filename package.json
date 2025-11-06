@@ -34,7 +34,7 @@
     "vitest": "^4.0.2"
   },
   "overrides": {
-    "crt-terminal": {
+    "@jquesnelle/crt-terminal": {
       "react": "19.1.0",
       "react-dom": "19.1.0"
     }
