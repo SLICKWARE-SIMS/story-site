@@ -1,6 +1,11 @@
 "use client";
 
-import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
+import {
+  Terminal,
+  useEventQueue,
+  textLine,
+  textWord,
+} from "@jquesnelle/crt-terminal";
 import styled from "styled-components";
 import { useState, useCallback, useEffect } from "react";
 import { useChokeGame } from "./useChokeGame";

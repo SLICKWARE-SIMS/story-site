@@ -37,10 +37,14 @@ export async function getAllStoryMetadata() {
   const storyCodes = await getAllStoryCodes();
   const storyMetadata: MetaData = {};
   for (const code of storyCodes) {
-    const storyContent = await loadStory(code);
-    const metaData: Record<string, unknown> =
-      parseTree(parseMdxToAst(storyContent)).metaData || {};
-    storyMetadata[code] = metaData;
+    try {
+      const storyContent = await loadStory(code);
+      const metaData: Record<string, unknown> =
+        parseTree(parseMdxToAst(storyContent)).metaData || {};
+      storyMetadata[code] = metaData;
+    } catch (e) {
+      console.error(`Failed to load story metadata for code: ${code}`, e);
+    }
   }
   return storyMetadata;
 }

@@ -43,6 +43,4 @@ const asciiBanner = `░██     ░██   ░██    ░█████�
 `;
 
 export const bannerLogo =
-  process.env.NODE_ENV === "development"
-    ? "[DEV BUILD]\n"
-    : asciiBanner
+  process.env.NODE_ENV === "development" ? "[DEV BUILD]\n" : asciiBanner;

@@ -11,8 +11,8 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@jquesnelle/crt-terminal": "^1.0.29",
     "@uidotdev/usehooks": "^2.4.1",
-    "crt-terminal": "^1.1.2",
     "mdx-choose-your-own-adventure": "git@github.com:ttrpg-4-me/mdx-choose-your-own-adventure.git",
     "next": "15.5.6",
     "react": "19.1.0",

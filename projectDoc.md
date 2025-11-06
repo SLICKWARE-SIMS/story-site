@@ -4,7 +4,7 @@ This project is a React/TS project. It presents an interactive story for the use
 
 ## UI
 
-This project uses the `crt-terminal` package for the interface.
+This project uses the `@jquesnelle/crt-terminal` package for the interface.
 
 ## Story Import
 

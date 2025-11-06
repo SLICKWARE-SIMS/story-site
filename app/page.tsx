@@ -1,6 +1,11 @@
 "use client";
 
-import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
+import {
+  Terminal,
+  useEventQueue,
+  textLine,
+  textWord,
+} from "@jquesnelle/crt-terminal";
 import styled from "styled-components";
 import { useEffect, useMemo, useState } from "react";
 import { useGoogleSheet } from "./hooks/useGoogleSheet";
@@ -317,7 +322,6 @@ export default function Home() {
         }),
       ]);
 
-      
       const triggers = (metadata[command] || []).triggers;
       if (triggers && Array.isArray(triggers)) {
         print([
@@ -637,6 +641,12 @@ export default function Home() {
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: bannerText })] })]}
         onCommand={handleCommand}
+        printer={{
+          // milliseconds between ticks
+          printerSpeed: 1,
+          // how many characters to print per tick
+          charactersPerTick: 3,
+        }}
         effects={{
           screenEffects: false,
         }}

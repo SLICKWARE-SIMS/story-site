@@ -141,7 +141,7 @@ export function parseTree(ast: ReturnType<typeof parseMdxToAst>): StoryTree {
 
   Object.values(tree.passages).forEach((passage, index) => {
     passage.transitions.forEach((transition) => {
-      if (!(transition.header in tree.passages )) {
+      if (!(transition.header in tree.passages)) {
         throw new ReferenceError(
           `Transition to non-existing passage: ${transition.header}`
         );
