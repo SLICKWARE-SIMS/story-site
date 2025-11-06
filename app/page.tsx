@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
 import {
   Terminal,
   useEventQueue,
   textLine,
   textWord,
-} from "@jquesnelle/crt-terminal";
-import styled from "styled-components";
-import { useEffect, useMemo, useState } from "react";
-import { useGoogleSheet } from "./hooks/useGoogleSheet";
-import { useCYOARunner, getAllStoryMetadata } from "./hooks/runner";
-import { bannerLogo } from "./banner";
+} from '@jquesnelle/crt-terminal';
+import styled from 'styled-components';
+import { useGoogleSheet } from './hooks/useGoogleSheet';
+import { useEffect, useMemo, useState } from 'react';
+import { bannerLogo } from './banner';
+import { useCYOARunner, getAllStoryMetadata } from './hooks/runner';
 
 const PageContainer = styled.div`
   width: 100vw;
@@ -45,22 +45,22 @@ Available commands:
 `;
 
 const sqlKeywords = [
-  "SELECT",
-  "INSERT",
-  "UPDATE",
-  "DELETE",
-  "DROP",
-  "ALTER",
-  "CREATE",
-  "EXEC",
+  'SELECT',
+  'INSERT',
+  'UPDATE',
+  'DELETE',
+  'DROP',
+  'ALTER',
+  'CREATE',
+  'EXEC',
   // "UNION", union is ok
-  "WHERE",
-  "FROM",
-  "JOIN",
-  "--",
+  'WHERE',
+  'FROM',
+  'JOIN',
+  '--',
   // ";",
-  "/*",
-  "*/",
+  '/*',
+  '*/',
 ];
 const sqlCheck = (command: string) => {
   const upperCommand = command.toUpperCase();
@@ -69,7 +69,7 @@ const sqlCheck = (command: string) => {
 
 const resolveBelligerentUser = () => {
   window.location.href = atob(
-    "aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQ=="
+    'aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQ=='
   );
 };
 
@@ -77,7 +77,7 @@ function getInventoryDisplayText(
   inventory: Record<string, unknown> | undefined
 ) {
   if (inventory === undefined) {
-    return ["  Empty"];
+    return ['  Empty'];
   }
   const displayText = [];
   for (const [key, value] of Object.entries(inventory)) {
@@ -91,15 +91,15 @@ function getInventoryDisplayText(
 const MAX_DEMO_ACTIONS = 10;
 export default function Home() {
   const { data } = useGoogleSheet(
-    "1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg"
+    '1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg'
   );
   const eventQueue = useEventQueue();
   const { print } = eventQueue.handlers;
   const [loginStep, setLoginStep] = useState<
-    null | "story" | "access" | "hardwareCheck"
+    null | 'story' | 'access' | 'hardwareCheck'
   >(null);
-  const [_userName, setUserName] = useState("");
-  const [storyCode, setStoryCode] = useState("");
+  const [_userName, setUserName] = useState('');
+  const [storyCode, setStoryCode] = useState('');
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [actionCount, setActionCount] = useState(0);
 
@@ -110,9 +110,9 @@ export default function Home() {
     if (!data) return new Map();
 
     return data.reduce((acc, row) => {
-      if ("DISCORD" in row && row["DISCORD"]) {
-        acc.set(row["6 Character"].toString(), row["DISCORD"]);
-        acc.set(row["SHA-256 Serial"].toString(), row["DISCORD"]);
+      if ('DISCORD' in row && row['DISCORD']) {
+        acc.set(row['6 Character'].toString(), row['DISCORD']);
+        acc.set(row['SHA-256 Serial'].toString(), row['DISCORD']);
       }
       return acc;
     }, new Map());
@@ -125,11 +125,11 @@ export default function Home() {
       textLine({
         words: [
           textWord({
-            characters: "\n" + runner?.passageText?.join("\n\n") + "\n",
+            characters: '\n' + runner?.passageText?.join('\n\n') + '\n',
           }),
         ],
       }),
-      textLine({ words: [textWord({ characters: "\nAvailable choices:" })] }),
+      textLine({ words: [textWord({ characters: '\nAvailable choices:' })] }),
       ...runner.transitionOptions.map((option, idx) =>
         textLine({
           words: [textWord({ characters: `[${idx + 1}] ${option.text}` })],
@@ -148,9 +148,9 @@ export default function Home() {
 
   // Disable autocomplete on the terminal input
   useEffect(() => {
-    const input = document.querySelector(".crt-terminal input");
+    const input = document.querySelector('.crt-terminal input');
     if (input) {
-      input.setAttribute("autocomplete", "off");
+      input.setAttribute('autocomplete', 'off');
     }
   }, []);
 
@@ -159,8 +159,8 @@ export default function Home() {
       return resolveBelligerentUser();
     }
 
-    if (command === "demo") {
-      setLoginStep("story");
+    if (command === 'demo') {
+      setLoginStep('story');
       setIsDemoMode(true);
       setActionCount(0);
 
@@ -178,7 +178,7 @@ export default function Home() {
         textLine({
           words: [
             textWord({
-              characters: "Choose a Simulation™",
+              characters: 'Choose a Simulation™',
             }),
           ],
         }),
@@ -200,7 +200,7 @@ export default function Home() {
       return;
     }
 
-    if (command === "runner") {
+    if (command === 'runner') {
       if (runner && runner.isLoaded) {
         print([
           textLine({
@@ -214,7 +214,7 @@ export default function Home() {
             words: [
               textWord({
                 characters: `\nPassage Text:\n${
-                  runner?.passageText?.join("\n") || ""
+                  runner?.passageText?.join('\n') || ''
                 }\n`,
               }),
             ],
@@ -239,7 +239,7 @@ export default function Home() {
             words: [
               textWord({
                 characters: `\nStory Complete: ${
-                  runner.isDone ? "Yes" : "No"
+                  runner.isDone ? 'Yes' : 'No'
                 }\n`,
               }),
             ],
@@ -260,9 +260,9 @@ export default function Home() {
       }
     }
 
-    if (loginStep === "hardwareCheck") {
+    if (loginStep === 'hardwareCheck') {
       setLoginStep(null);
-      if (!command.toLowerCase().includes("y")) {
+      if (!command.toLowerCase().includes('y')) {
         return;
       }
 
@@ -271,44 +271,44 @@ export default function Home() {
       print([
         textLine({
           words: [
-            textWord({ characters: "\nSimulation™ loaded successfully!\n" }),
+            textWord({ characters: '\nSimulation™ loaded successfully!\n' }),
           ],
         }),
       ]);
       return;
     }
 
-    if (loginStep === "story") {
+    if (loginStep === 'story') {
       const metadata = await getAllStoryMetadata();
       if (!(command in metadata)) {
         print([
           textLine({
             words: [
               textWord({
-                characters: "Invalid simulation code. Type again.",
+                characters: 'Invalid simulation code. Type again.',
               }),
             ],
           }),
         ]);
-        setLoginStep("story");
+        setLoginStep('story');
         return;
       }
 
       setStoryCode(command);
-      setLoginStep("hardwareCheck");
+      setLoginStep('hardwareCheck');
 
       print([
         textLine({
           words: [
             textWord({
-              characters: "Beginning Simulation™...",
+              characters: 'Beginning Simulation™...',
             }),
           ],
         }),
         textLine({
           words: [
             textWord({
-              characters: "ERROR: SLICKWARE NOT DETECTED",
+              characters: 'ERROR: SLICKWARE NOT DETECTED',
             }),
           ],
         }),
@@ -316,7 +316,7 @@ export default function Home() {
           words: [
             textWord({
               characters:
-                "A text interface will be provided for debugging purposes.",
+                'A text interface will be provided for debugging purposes.',
             }),
           ],
         }),
@@ -329,7 +329,7 @@ export default function Home() {
             words: [
               textWord({
                 characters:
-                  "WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:",
+                  'WARNING: SIMULATIONS MAY CONTAIN TRIGGERING CONTENT:',
               }),
             ],
           }),
@@ -352,7 +352,7 @@ export default function Home() {
         textLine({
           words: [
             textWord({
-              characters: "Proceed? (Y/n)",
+              characters: 'Proceed? (Y/n)',
             }),
           ],
         }),
@@ -361,17 +361,17 @@ export default function Home() {
       return;
     }
 
-    if (loginStep === "access") {
-      setLoginStep("story");
+    if (loginStep === 'access') {
+      setLoginStep('story');
       try {
         // Check access code
         const codesToCheck =
-          process.env.NODE_ENV === "development" ? ["asdf"] : [];
+          process.env.NODE_ENV === 'development' ? ['asdf'] : [];
         const isFullAccess = [
           ...codesToCheck,
           ...Array.from(accessCodeToName.keys()),
         ].includes(command.toLowerCase());
-        setStoryCode("blackMarket");
+        setStoryCode('blackMarket');
 
         print([
           textLine({
@@ -397,7 +397,7 @@ export default function Home() {
         }
 
         const name = accessCodeToName.get(command);
-        if (name.includes("beefstink")) {
+        if (name.includes('beefstink')) {
           return resolveBelligerentUser();
         }
 
@@ -415,7 +415,7 @@ export default function Home() {
           textLine({
             words: [
               textWord({
-                characters: "Choose a Simulation™",
+                characters: 'Choose a Simulation™',
               }),
             ],
           }),
@@ -436,7 +436,7 @@ export default function Home() {
 
         return;
       } catch (error: unknown) {
-        let errMessage = "";
+        let errMessage = '';
         if (error instanceof Error) {
           errMessage = error.message;
         }
@@ -470,7 +470,7 @@ export default function Home() {
     }
 
     if (runner.isLoaded && !runner.isDone) {
-      if (command == "inventory") {
+      if (command == 'inventory') {
         print([
           textLine({
             words: getInventoryDisplayText(runner.inventory).map(
@@ -548,15 +548,15 @@ export default function Home() {
     }
 
     switch (command.toLowerCase()) {
-      case "login":
-        setLoginStep("access");
+      case 'login':
+        setLoginStep('access');
         print([
           textLine({
-            words: [textWord({ characters: "Please enter your credentials:" })],
+            words: [textWord({ characters: 'Please enter your credentials:' })],
           }),
         ]);
         break;
-      case "help":
+      case 'help':
         print([
           textLine({
             words: [
@@ -570,14 +570,14 @@ export default function Home() {
           }),
         ]);
         break;
-      case "inventory":
+      case 'inventory':
         if (runner) {
           if (!runner.inventory || Object.keys(runner.inventory).length === 0) {
             print([
               textLine({
                 words: [
                   textWord({
-                    characters: "Your inventory is empty.\n",
+                    characters: 'Your inventory is empty.\n',
                   }),
                 ],
               }),
@@ -607,15 +607,15 @@ export default function Home() {
           ]);
         }
         break;
-      case "dev": {
-        if (process.env.NODE_ENV === "development") {
-          setUserName("SomeKittens");
-          setStoryCode("blackMarket");
-          await runner.loadStory("blackMarket");
+      case 'dev': {
+        if (process.env.NODE_ENV === 'development') {
+          setUserName('SomeKittens');
+          setStoryCode('blackMarket');
+          await runner.loadStory('blackMarket');
 
           print([
             textLine({
-              words: [textWord({ characters: "\nStory loaded (dev mode)!\n" })],
+              words: [textWord({ characters: '\nStory loaded (dev mode)!\n' })],
             }),
           ]);
           // printPassage();

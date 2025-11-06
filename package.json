@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
+    "lint": "next lint",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui"
@@ -13,6 +14,11 @@
   "dependencies": {
     "@jquesnelle/crt-terminal": "^1.0.29",
     "@uidotdev/usehooks": "^2.4.1",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "mdx-choose-your-own-adventure": "git@github.com:ttrpg-4-me/mdx-choose-your-own-adventure.git",
     "next": "15.5.6",
     "react": "19.1.0",
@@ -21,14 +27,17 @@
     "remark-mdx": "^3.1.1",
     "remark-parse": "^11.0.0",
     "styled-components": "^6.1.19",
+    "typescript-eslint": "^8.46.3",
     "yaml": "^2.8.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/styled-components": "^5.1.34",
     "@vitest/ui": "^4.0.2",
+    "globals": "^16.5.0",
     "happy-dom": "^20.0.8",
     "typescript": "^5",
     "vitest": "^4.0.2"
