@@ -1,9 +1,9 @@
-import { remark } from "remark";
-import remarkMdx from "remark-mdx";
-import remarkParse from "remark-parse";
-import YAML from "yaml";
+import { remark } from 'remark';
+import remarkMdx from 'remark-mdx';
+import remarkParse from 'remark-parse';
+import YAML from 'yaml';
 
-const scriptTypes = ["mdxjsEsm", "mdxFlowExpression", "mdxJsxFlowElement"];
+const scriptTypes = ['mdxjsEsm', 'mdxFlowExpression', 'mdxJsxFlowElement'];
 
 export interface Transition {
   transitionCriteria: string | null;
@@ -25,7 +25,7 @@ export interface StoryTree {
 }
 
 function parseHeader(tokens: any[]): Record<string, unknown> {
-  if (tokens.length == 0 || tokens.at(-1).type != "thematicBreak") {
+  if (tokens.length == 0 || tokens.at(-1).type != 'thematicBreak') {
     return {};
   }
   tokens.pop();
@@ -50,11 +50,11 @@ function parseAllType(
 function convertStringMarkdownHeaderFormat(s: string): string {
   // Convert to lowercase, replace spaces with hyphens, remove special characters except hyphens
   return (
-    "#" +
+    '#' +
     s
       .toLowerCase()
-      .replaceAll(" ", "-")
-      .replace(/[^a-z0-9-]/g, "")
+      .replaceAll(' ', '-')
+      .replace(/[^a-z0-9-]/g, '')
   );
 }
 
@@ -67,8 +67,8 @@ function parseTransition(transition: any): Transition {
     };
   }
   if (
-    transition.children[0].type == "mdxJsxFlowElement" &&
-    transition.children[0].name.toLowerCase() == "if"
+    transition.children[0].type == 'mdxJsxFlowElement' &&
+    transition.children[0].name.toLowerCase() == 'if'
   ) {
     return {
       transitionCriteria: transition.children[0].attributes[0].value.value,
@@ -81,7 +81,7 @@ function parseTransition(transition: any): Transition {
 }
 
 function parsePassage(tokens: unknown[], tree: StoryTree): void {
-  while (tokens.length > 0 && (tokens.at(-1) as any).type != "heading") {
+  while (tokens.length > 0 && (tokens.at(-1) as any).type != 'heading') {
     tokens.pop();
   }
   if (tokens.length == 0) {
@@ -96,20 +96,20 @@ function parsePassage(tokens: unknown[], tree: StoryTree): void {
     transitions: [],
   };
 
-  while (tokens.length > 0 && (tokens.at(-1) as any).type != "heading") {
+  while (tokens.length > 0 && (tokens.at(-1) as any).type != 'heading') {
     if (scriptTypes.includes((tokens.at(-1) as any).type)) {
       tree.passages[header_name].initializationScript.push(
         (tokens.pop() as any).value
       );
       continue;
     }
-    if ((tokens.at(-1) as any).type == "paragraph") {
+    if ((tokens.at(-1) as any).type == 'paragraph') {
       const paragraph = tokens.pop() as any;
-      const value = paragraph.children?.[0]?.value ?? "";
+      const value = paragraph.children?.[0]?.value ?? '';
       tree.passages[header_name].text.push(value);
       continue;
     }
-    if ((tokens.at(-1) as any).type == "list") {
+    if ((tokens.at(-1) as any).type == 'list') {
       (tokens.pop() as any).children.forEach((element: any) => {
         tree.passages[header_name].transitions.push(parseTransition(element));
       });
@@ -137,9 +137,9 @@ export function parseTree(ast: ReturnType<typeof parseMdxToAst>): StoryTree {
   while (tokens.length > 0) {
     parsePassage(tokens, tree);
   }
-  console.log("tree: ", tree);
+  console.log('tree: ', tree);
 
-  Object.values(tree.passages).forEach((passage, index) => {
+  Object.values(tree.passages).forEach((passage) => {
     passage.transitions.forEach((transition) => {
       if (!(transition.header in tree.passages)) {
         throw new ReferenceError(

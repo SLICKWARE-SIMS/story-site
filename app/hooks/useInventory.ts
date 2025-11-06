@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
-import { useLocalStorage } from "@uidotdev/usehooks";
-import { useState } from "react";
+import { useState } from 'react';
 
 export interface Inventory {
   credits: number;
   items: string[];
 }
 
-const INVENTORY_STORAGE_KEY = "slickware_inventory";
+// const INVENTORY_STORAGE_KEY = 'slickware_inventory';
 
 const DEFAULT_INVENTORY: Inventory = {
   credits: 0,

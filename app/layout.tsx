@@ -1,22 +1,26 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import StyledComponentsRegistry from "./lib/registry";
+import './globals.css';
+
+import React from 'react';
+
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+
+import StyledComponentsRegistry from './lib/registry';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "H13-447D4H",
+  title: 'H13-447D4H',
   description:
-    "The best stories on the Dream, delivered directly to your neurons.",
+    'The best stories on the Dream, delivered directly to your neurons.',
 };
 
 export default function RootLayout({

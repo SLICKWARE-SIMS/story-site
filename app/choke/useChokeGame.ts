@@ -1,12 +1,13 @@
-import { useState, useCallback } from "react";
-import { gameData } from "./gameData";
+import { useCallback, useState } from 'react';
+
+import { gameData } from './gameData';
 import type {
-  Room,
-  Monster,
   EquipmentItem,
-  RoomObject,
+  Monster,
+  Room,
   RoomItem,
-} from "./types";
+  RoomObject,
+} from './types';
 
 // big, terrifying ball of state for the choke game
 // TODO: refactor to smaller hooks?
@@ -20,18 +21,19 @@ export function useChokeGame() {
   const [SP] = useState(80);
   const [IN] = useState(80);
   const [CO] = useState(80);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_combat, setCombat] = useState(0);
   const [advantage, setAdvantage] = useState(0);
 
-  const [ranged, setRanged] = useState({ name: "Shotgun", dmg: 4, ammo: 4 });
-  const [close] = useState({ name: "Boarding Axe", dmg: 2 });
+  const [ranged, setRanged] = useState({ name: 'Shotgun', dmg: 4, ammo: 4 });
+  const [close] = useState({ name: 'Boarding Axe', dmg: 2 });
 
   const [equipment, setEquipment] = useState<EquipmentItem[]>([
-    { item: "STIMPACK", number: 3 },
-    { item: "FLASHLIGHT", number: 100 },
-    { item: "Bioscanner", number: 10 },
-    { item: "MEDS", number: 1 },
-    { item: "BATTERIES", number: 0 },
+    { item: 'STIMPACK', number: 3 },
+    { item: 'FLASHLIGHT', number: 100 },
+    { item: 'Bioscanner', number: 10 },
+    { item: 'MEDS', number: 1 },
+    { item: 'BATTERIES', number: 0 },
   ]);
 
   const [rooms, setRooms] = useState<Room[]>(gameData.rooms);
@@ -73,7 +75,7 @@ export function useChokeGame() {
         const randomChoice = Math.floor(Math.random() * 4);
         const door = monsterRoom.doors[randomChoice];
 
-        if (door !== "x") {
+        if (door !== 'x') {
           return {
             ...monster,
             roomNo: monsterRoom.doorRoomNos[randomChoice],
@@ -90,11 +92,11 @@ export function useChokeGame() {
     // Add object descriptions
     if (room.objects && room.objects.length > 0) {
       const objectDescs = room.objects.map((obj: RoomObject, idx: number) => {
-        const state = obj.open ? "open" : "closed";
-        const prefix = idx === 0 ? "\nYou see a" : " and a";
+        const state = obj.open ? 'open' : 'closed';
+        const prefix = idx === 0 ? '\nYou see a' : ' and a';
         return `${prefix} ${obj.object} that is ${state}`;
       });
-      description += objectDescs.join("");
+      description += objectDescs.join('');
     }
 
     // Add item descriptions
@@ -103,19 +105,19 @@ export function useChokeGame() {
       room.items.forEach((item: RoomItem, idx: number) => {
         if (item.pickedUp === 0) {
           const article =
-            item.item === "AMMO" || item.item === "MEDS" ? "some" : "a";
+            item.item === 'AMMO' || item.item === 'MEDS' ? 'some' : 'a';
           const prefix =
             idx === 0 && (!room.objects || room.objects.length === 0)
-              ? "\nYou also see"
+              ? '\nYou also see'
               : idx === 0
-              ? "\nYou also see"
-              : " and";
+              ? '\nYou also see'
+              : ' and';
           itemDescs.push(
             `${prefix} ${article} ${item.item} on a ${item.location}`
           );
         }
       });
-      description += itemDescs.join("");
+      description += itemDescs.join('');
     }
 
     return description;
@@ -132,7 +134,7 @@ export function useChokeGame() {
   const getInventory = useCallback(() => {
     const kitList = equipment
       .map((item) => `${item.item} ${item.number}`)
-      .join(", ");
+      .join(', ');
     return `${kitList}
 ${ranged.name} 4d10dmg ${ranged.ammo}shots
 ${close.name} ${close.dmg}d10dmg
@@ -162,8 +164,8 @@ ${close.name} ${close.dmg}d10dmg
 
       const currentRoom = rooms[roomNo];
 
-      if (currentRoom.doors[dirIdx] === "x") {
-        return "You cannot go this way";
+      if (currentRoom.doors[dirIdx] === 'x') {
+        return 'You cannot go this way';
       }
 
       // Check if door is locked
@@ -239,7 +241,7 @@ ${close.name} ${close.dmg}d10dmg
         const result = `You pull the trigger of your ${ranged.name} but it just clicks. You are out of ammo!\n\nThe monster hits you for ${monsterDmg}dmg! (${newHP})`;
 
         if (newHP <= 0) {
-          return result + "\n\nYou have died...";
+          return result + '\n\nYou have died...';
         }
         return result;
       }
@@ -248,10 +250,10 @@ ${close.name} ${close.dmg}d10dmg
 
     const monster = monsters.find((m) => m.roomNo === roomNo && m.hp > 0);
     if (!monster) {
-      return "There is no monster to shoot!";
+      return 'There is no monster to shoot!';
     }
 
-    let result = "";
+    let result = '';
     const speedCheck = d100();
 
     if (speedCheck < SP) {
@@ -280,7 +282,7 @@ ${close.name} ${close.dmg}d10dmg
               monster.name
             } hits you back for ${monsterDmg}dmg! (${HP - monsterDmg})`;
             if (HP - monsterDmg <= 0) {
-              result += "\n\nYou have died...";
+              result += '\n\nYou have died...';
             }
           } else {
             result += `The ${monster.name} misses you`;
@@ -314,7 +316,7 @@ ${close.name} ${close.dmg}d10dmg
           HP - monsterDmg
         })`;
         if (HP - monsterDmg <= 0) {
-          result += "\n\nYou have died...";
+          result += '\n\nYou have died...';
           return result;
         }
       } else {
@@ -350,10 +352,10 @@ ${close.name} ${close.dmg}d10dmg
   const hit = useCallback(() => {
     const monster = monsters.find((m) => m.roomNo === roomNo && m.hp > 0);
     if (!monster) {
-      return "There is no monster to hit!";
+      return 'There is no monster to hit!';
     }
 
-    let result = "";
+    let result = '';
     const speedCheck = d100();
 
     if (speedCheck < SP) {
@@ -379,7 +381,7 @@ ${close.name} ${close.dmg}d10dmg
               monster.name
             } hits you back for ${monsterDmg}dmg! (${HP - monsterDmg})`;
             if (HP - monsterDmg <= 0) {
-              result += "\n\nYou have died...";
+              result += '\n\nYou have died...';
             }
           } else {
             result += `The ${monster.name} misses you`;
@@ -402,7 +404,7 @@ ${close.name} ${close.dmg}d10dmg
           HP - monsterDmg
         })`;
         if (HP - monsterDmg <= 0) {
-          result += "\n\nYou have died...";
+          result += '\n\nYou have died...';
           return result;
         }
       } else {
@@ -440,10 +442,10 @@ ${close.name} ${close.dmg}d10dmg
       );
 
       if (!roomItem) {
-        return "That item is not in the room\n\nMake sure you have use CAPITALS to spell the Item you want to pickup";
+        return 'That item is not in the room\n\nMake sure you have use CAPITALS to spell the Item you want to pickup';
       }
 
-      if (item === "AMMO") {
+      if (item === 'AMMO') {
         setRanged((prev) => ({ ...prev, ammo: prev.ammo + 6 }));
         setRooms((prev) =>
           prev.map((r, idx) =>
@@ -459,7 +461,7 @@ ${close.name} ${close.dmg}d10dmg
         );
         upkeep();
         monsterUpkeep();
-        return "You pick up 6 ammo";
+        return 'You pick up 6 ammo';
       }
 
       const equipmentItem = equipment.find((e) => e.item === item);
@@ -507,7 +509,7 @@ ${close.name} ${close.dmg}d10dmg
         return `You pick up the ${item}`;
       }
 
-      return "That item is not in the room";
+      return 'That item is not in the room';
     },
     [roomNo, rooms, equipment, upkeep, monsterUpkeep]
   );
@@ -521,7 +523,7 @@ ${close.name} ${close.dmg}d10dmg
         return {
           needsStrengthCheck: false,
           message:
-            "That is not in the room\n\nMake sure you have use CAPITALS to spell the Object you want to open",
+            'That is not in the room\n\nMake sure you have use CAPITALS to spell the Object you want to open',
         };
       }
 
@@ -532,17 +534,17 @@ ${close.name} ${close.dmg}d10dmg
         };
       }
 
-      if (obj.check === "ST") {
+      if (obj.check === 'ST') {
         return {
           needsStrengthCheck: true,
-          message: "",
+          message: '',
         };
       }
 
       // Open without strength check
       return {
         needsStrengthCheck: false,
-        message: "",
+        message: '',
         autoOpen: true,
       };
     },
@@ -557,34 +559,34 @@ ${close.name} ${close.dmg}d10dmg
       );
 
       if (objIndex === undefined || objIndex === -1) {
-        return "Object not found";
+        return 'Object not found';
       }
 
       const obj = room.objects![objIndex];
 
-      if (response === "N") {
+      if (response === 'N') {
         upkeep();
         monsterUpkeep();
-        return "You choose to save your energy";
+        return 'You choose to save your energy';
       }
 
-      if (response !== "Y") {
-        return "That is not a valid option. Please type Y or N";
+      if (response !== 'Y') {
+        return 'That is not a valid option. Please type Y or N';
       }
 
       const diceRoll = Math.floor(Math.random() * 100);
       let item = obj.item;
 
       // Generate random item if needed
-      if (item === "random") {
+      if (item === 'random') {
         const random = Math.floor(Math.random() * 6) + 1;
         const itemMap: { [key: number]: string } = {
-          1: "NOTHING",
-          2: "AMMO",
-          3: "STIMPACK",
-          4: "MEDS",
-          5: "SHOTGUN",
-          6: "BOARDING AXE",
+          1: 'NOTHING',
+          2: 'AMMO',
+          3: 'STIMPACK',
+          4: 'MEDS',
+          5: 'SHOTGUN',
+          6: 'BOARDING AXE',
         };
         item = itemMap[random];
       }
@@ -605,14 +607,14 @@ ${close.name} ${close.dmg}d10dmg
         );
 
         const article =
-          item === "NOTHING"
-            ? ""
-            : item === "AMMO" || item === "MEDS"
-            ? "some"
-            : "a";
+          item === 'NOTHING'
+            ? ''
+            : item === 'AMMO' || item === 'MEDS'
+            ? 'some'
+            : 'a';
         const foundText =
-          item === "NOTHING"
-            ? "But you find nothing inside. Unlucky!"
+          item === 'NOTHING'
+            ? 'But you find nothing inside. Unlucky!'
             : `You find inside ${article} ${item}!`;
 
         upkeep();
@@ -630,51 +632,51 @@ ${close.name} ${close.dmg}d10dmg
   );
 
   const listen = useCallback(() => {
-    let listenString = "";
+    let listenString = '';
 
     monsters.forEach((monster) => {
       // North
       const listenCheckN = Math.floor(Math.random() * 100);
       if (listenCheckN < IN) {
         listenString +=
-          monster.roomNo === rooms[roomNo].doorRoomNos[0] ? "N" : "n";
+          monster.roomNo === rooms[roomNo].doorRoomNos[0] ? 'N' : 'n';
       } else {
-        listenString += "n";
+        listenString += 'n';
       }
 
       // East
       const listenCheckE = Math.floor(Math.random() * 100);
       if (listenCheckE < IN) {
         listenString +=
-          monster.roomNo === rooms[roomNo].doorRoomNos[1] ? "E" : "e";
+          monster.roomNo === rooms[roomNo].doorRoomNos[1] ? 'E' : 'e';
       } else {
-        listenString += "e";
+        listenString += 'e';
       }
 
       // South
       const listenCheckS = Math.floor(Math.random() * 100);
       if (listenCheckS < IN) {
         listenString +=
-          monster.roomNo === rooms[roomNo].doorRoomNos[2] ? "S" : "s";
+          monster.roomNo === rooms[roomNo].doorRoomNos[2] ? 'S' : 's';
       } else {
-        listenString += "s";
+        listenString += 's';
       }
 
       // West
       const listenCheckW = Math.floor(Math.random() * 100);
       if (listenCheckW < IN) {
         listenString +=
-          monster.roomNo === rooms[roomNo].doorRoomNos[3] ? "W" : "w";
+          monster.roomNo === rooms[roomNo].doorRoomNos[3] ? 'W' : 'w';
       } else {
-        listenString += "w";
+        listenString += 'w';
       }
 
       // Here
       const listenCheckH = Math.floor(Math.random() * 100);
       if (listenCheckH < IN) {
-        listenString += monster.roomNo === roomNo ? "H" : "h";
+        listenString += monster.roomNo === roomNo ? 'H' : 'h';
       } else {
-        listenString += "h";
+        listenString += 'h';
       }
     });
 
@@ -684,28 +686,28 @@ ${close.name} ${close.dmg}d10dmg
   }, [roomNo, rooms, monsters, IN, upkeep, monsterUpkeep]);
 
   const scan = useCallback(() => {
-    const bioscannerItem = equipment.find((e) => e.item === "Bioscanner");
+    const bioscannerItem = equipment.find((e) => e.item === 'Bioscanner');
 
     if (!bioscannerItem || bioscannerItem.number === -1) {
-      return "You do not currently have a Bioscanner";
+      return 'You do not currently have a Bioscanner';
     }
 
     if (bioscannerItem.number === 0) {
-      return "Your Bioscanner is out of energy and is not currently working!";
+      return 'Your Bioscanner is out of energy and is not currently working!';
     }
 
-    let scanString = "";
+    let scanString = '';
     monsters.forEach((monster) => {
-      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[0] ? "N" : "n";
-      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[1] ? "E" : "e";
-      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[2] ? "S" : "s";
-      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[3] ? "W" : "w";
-      scanString += monster.roomNo === roomNo ? "H" : "h";
+      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[0] ? 'N' : 'n';
+      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[1] ? 'E' : 'e';
+      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[2] ? 'S' : 's';
+      scanString += monster.roomNo === rooms[roomNo].doorRoomNos[3] ? 'W' : 'w';
+      scanString += monster.roomNo === roomNo ? 'H' : 'h';
     });
 
     setEquipment((prev) =>
       prev.map((item) =>
-        item.item === "Bioscanner" ? { ...item, number: item.number - 1 } : item
+        item.item === 'Bioscanner' ? { ...item, number: item.number - 1 } : item
       )
     );
 
@@ -721,9 +723,9 @@ ${close.name} ${close.dmg}d10dmg
   }, [roomNo, rooms, monsters, equipment, upkeep, monsterUpkeep]);
 
   const useStimpack = useCallback(() => {
-    const stimpackItem = equipment.find((e) => e.item === "STIMPACK");
+    const stimpackItem = equipment.find((e) => e.item === 'STIMPACK');
     if (!stimpackItem || stimpackItem.number <= 0) {
-      return "You do not have any stimpacks!";
+      return 'You do not have any stimpacks!';
     }
 
     const healing = Math.floor(Math.random() * 10) + 1;
@@ -731,7 +733,7 @@ ${close.name} ${close.dmg}d10dmg
     setAdvantage(5);
     setEquipment((prev) =>
       prev.map((item) =>
-        item.item === "STIMPACK" ? { ...item, number: item.number - 1 } : item
+        item.item === 'STIMPACK' ? { ...item, number: item.number - 1 } : item
       )
     );
 
@@ -739,19 +741,19 @@ ${close.name} ${close.dmg}d10dmg
   }, [equipment]);
 
   const useMeds = useCallback(() => {
-    const medsItem = equipment.find((e) => e.item === "MEDS");
+    const medsItem = equipment.find((e) => e.item === 'MEDS');
     if (!medsItem || medsItem.number <= 0) {
-      return "You do not have any MEDS";
+      return 'You do not have any MEDS';
     }
 
     setStress((prev) => Math.max(0, prev - 10));
     setEquipment((prev) =>
       prev.map((item) =>
-        item.item === "MEDS" ? { ...item, number: item.number - 1 } : item
+        item.item === 'MEDS' ? { ...item, number: item.number - 1 } : item
       )
     );
 
-    return "You have reduced your stress by 10";
+    return 'You have reduced your stress by 10';
   }, [equipment]);
 
   return {

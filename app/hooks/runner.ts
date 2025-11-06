@@ -1,4 +1,5 @@
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef,useState } from "react";
+
 import {
   parseMdxToAst,
   parseTree,
@@ -6,7 +7,7 @@ import {
   StoryTree,
   Transition,
 } from "../../stories/parser";
-import { loadStory, getAllStoryCodes } from "../actions";
+import { getAllStoryCodes,loadStory } from "../actions";
 
 interface CYOARunnerState {
   representation: StoryTree;
@@ -71,7 +72,7 @@ export function useCYOARunner() {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const inventory = inv;
       arr.forEach((statement: string) => {
-        // eslint-disable-next-line no-eval
+         
         eval(statement);
       });
     };
@@ -102,7 +103,7 @@ export function useCYOARunner() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const inventory = newInventory;
     newPassage.initializationScript.forEach((statement: string) => {
-      // eslint-disable-next-line no-eval
+       
       eval(statement);
     });
 
@@ -134,7 +135,7 @@ export function useCYOARunner() {
       },
       get transitionOptions() {
         if (!stateRef.current) return [];
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         
         const inventory = stateRef.current.inventory;
 
         return stateRef.current.currentPassage.transitions.filter(function (

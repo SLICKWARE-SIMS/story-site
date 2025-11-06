@@ -80,4 +80,4 @@ export function parseStory(content: string): Story {
   };
 }
 
-export type { Story, Scene, Choice };
+export type { Choice,Scene, Story };

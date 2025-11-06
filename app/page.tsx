@@ -1,16 +1,18 @@
 'use client';
 
+import React, { useEffect, useMemo, useState } from 'react';
+
 import {
   Terminal,
-  useEventQueue,
   textLine,
   textWord,
+  useEventQueue,
 } from '@jquesnelle/crt-terminal';
 import styled from 'styled-components';
-import { useGoogleSheet } from './hooks/useGoogleSheet';
-import { useEffect, useMemo, useState } from 'react';
+
 import { bannerLogo } from './banner';
-import { useCYOARunner, getAllStoryMetadata } from './hooks/runner';
+import { getAllStoryMetadata, useCYOARunner } from './hooks/runner';
+import { useGoogleSheet } from './hooks/useGoogleSheet';
 
 const PageContainer = styled.div`
   width: 100vw;
@@ -98,7 +100,6 @@ export default function Home() {
   const [loginStep, setLoginStep] = useState<
     null | 'story' | 'access' | 'hardwareCheck'
   >(null);
-  const [_userName, setUserName] = useState('');
   const [storyCode, setStoryCode] = useState('');
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [actionCount, setActionCount] = useState(0);
@@ -588,6 +589,7 @@ export default function Home() {
           // remove empty inventory items
           print(
             Object.entries(runner.inventory)
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               .filter(([_, v]) => !!v)
               .map(([key, value]) =>
                 textLine({
@@ -609,7 +611,6 @@ export default function Home() {
         break;
       case 'dev': {
         if (process.env.NODE_ENV === 'development') {
-          setUserName('SomeKittens');
           setStoryCode('blackMarket');
           await runner.loadStory('blackMarket');
 
@@ -622,6 +623,7 @@ export default function Home() {
           break;
         }
       }
+      // eslint-disable-next-line no-fallthrough
       default:
         print([
           textLine({

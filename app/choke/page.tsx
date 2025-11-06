@@ -1,15 +1,17 @@
-"use client";
+'use client';
+
+import React, { useCallback, useEffect, useState } from 'react';
 
 import {
   Terminal,
-  useEventQueue,
   textLine,
   textWord,
-} from "@jquesnelle/crt-terminal";
-import styled from "styled-components";
-import { useState, useCallback, useEffect } from "react";
-import { useChokeGame } from "./useChokeGame";
-import { bannerLogo } from "../banner";
+  useEventQueue,
+} from '@jquesnelle/crt-terminal';
+import styled from 'styled-components';
+
+import { bannerLogo } from '../banner';
+import { useChokeGame } from './useChokeGame';
 
 const PageContainer = styled.div`
   width: 100vw;
@@ -64,14 +66,14 @@ export default function ChokePage() {
   const { print } = eventQueue.handlers;
   const game = useChokeGame();
   const [waitingForInput, setWaitingForInput] = useState<{
-    type: "strength" | null;
+    type: 'strength' | null;
     callback: (response: string) => void;
   } | null>(null);
   // Disable autocomplete on the terminal input
   useEffect(() => {
-    const input = document.querySelector(".crt-terminal input");
+    const input = document.querySelector('.crt-terminal input');
     if (input) {
-      input.setAttribute("autocomplete", "off");
+      input.setAttribute('autocomplete', 'off');
     }
   }, []);
 
@@ -89,149 +91,149 @@ export default function ChokePage() {
 
       // Handle game commands
       switch (cmd) {
-        case "start":
+        case 'start':
           print([
             textLine({
               words: [
                 textWord({
-                  characters: "\n" + game.getRoomDescription() + "\n",
+                  characters: '\n' + game.getRoomDescription() + '\n',
                 }),
               ],
             }),
           ]);
           break;
 
-        case "map":
+        case 'map':
           print([
             textLine({
-              words: [textWord({ characters: "\n" + game.getMap() + "\n" })],
+              words: [textWord({ characters: '\n' + game.getMap() + '\n' })],
             }),
           ]);
           break;
 
-        case "look":
+        case 'look':
           print([
             textLine({
               words: [
                 textWord({
-                  characters: "\n" + game.getRoomDescription() + "\n",
+                  characters: '\n' + game.getRoomDescription() + '\n',
                 }),
               ],
             }),
           ]);
           break;
 
-        case "kit":
+        case 'kit':
           print([
             textLine({
-              words: [textWord({ characters: "\n" + game.getInventory() })],
+              words: [textWord({ characters: '\n' + game.getInventory() })],
             }),
           ]);
           break;
 
-        case "stats":
+        case 'stats':
           print([
             textLine({
-              words: [textWord({ characters: "\n" + game.getStats() + "\n" })],
+              words: [textWord({ characters: '\n' + game.getStats() + '\n' })],
             }),
           ]);
           break;
 
-        case "n":
-        case "e":
-        case "s":
-        case "w": {
+        case 'n':
+        case 'e':
+        case 's':
+        case 'w': {
           const result = game.move(cmd);
           print([
             textLine({
-              words: [textWord({ characters: "\n" + result + "\n" })],
+              words: [textWord({ characters: '\n' + result + '\n' })],
             }),
           ]);
           break;
         }
 
-        case "shoot": {
+        case 'shoot': {
           const result = game.shoot();
           print([
             textLine({
-              words: [textWord({ characters: "\n" + result + "\n" })],
+              words: [textWord({ characters: '\n' + result + '\n' })],
             }),
           ]);
           break;
         }
 
-        case "hit": {
+        case 'hit': {
           const result = game.hit();
           print([
             textLine({
-              words: [textWord({ characters: "\n" + result + "\n" })],
+              words: [textWord({ characters: '\n' + result + '\n' })],
             }),
           ]);
           break;
         }
 
-        case "listen": {
+        case 'listen': {
           const result = game.listen();
           print([
             textLine({
-              words: [textWord({ characters: "\n" + result + "\n" })],
+              words: [textWord({ characters: '\n' + result + '\n' })],
             }),
           ]);
           break;
         }
 
-        case "scan": {
+        case 'scan': {
           const result = game.scan();
           print([
             textLine({
-              words: [textWord({ characters: "\n" + result + "\n" })],
+              words: [textWord({ characters: '\n' + result + '\n' })],
             }),
           ]);
           break;
         }
 
-        case "stimpack": {
+        case 'stimpack': {
           const result = game.useStimpack();
           print([
             textLine({
-              words: [textWord({ characters: "\n" + result + "\n" })],
+              words: [textWord({ characters: '\n' + result + '\n' })],
             }),
           ]);
           break;
         }
 
-        case "meds": {
+        case 'meds': {
           const result = game.useMeds();
           print([
             textLine({
-              words: [textWord({ characters: "\n" + result + "\n" })],
+              words: [textWord({ characters: '\n' + result + '\n' })],
             }),
           ]);
           break;
         }
 
-        case "info":
-        case "help":
+        case 'info':
+        case 'help':
           print([
             textLine({
-              words: [textWord({ characters: "\n" + bannerText })],
+              words: [textWord({ characters: '\n' + bannerText })],
             }),
           ]);
           break;
 
         default:
           // Check if it's a pickup command
-          if (cmd.startsWith("pickup ")) {
+          if (cmd.startsWith('pickup ')) {
             const item = command.substring(7).toUpperCase();
             const result = game.pickup(item);
             print([
               textLine({
-                words: [textWord({ characters: "\n" + result + "\n" })],
+                words: [textWord({ characters: '\n' + result + '\n' })],
               }),
             ]);
           }
           // Check if it's an open command
-          else if (cmd.startsWith("open ")) {
+          else if (cmd.startsWith('open ')) {
             const object = command.substring(5).toUpperCase();
             const openResult = game.tryOpen(object);
 
@@ -242,13 +244,13 @@ export default function ChokePage() {
                   words: [
                     textWord({
                       characters:
-                        "\nIt is stuck shut, you will need to perform a strength check to open it. Would you like to do this? Y/N:",
+                        '\nIt is stuck shut, you will need to perform a strength check to open it. Would you like to do this? Y/N:',
                     }),
                   ],
                 }),
               ]);
               setWaitingForInput({
-                type: "strength",
+                type: 'strength',
                 callback: (response: string) => {
                   const result = game.openWithStrengthCheck(
                     object,
@@ -256,7 +258,7 @@ export default function ChokePage() {
                   );
                   print([
                     textLine({
-                      words: [textWord({ characters: "\n" + result + "\n" })],
+                      words: [textWord({ characters: '\n' + result + '\n' })],
                     }),
                   ]);
                 },
@@ -264,7 +266,7 @@ export default function ChokePage() {
             } else {
               print([
                 textLine({
-                  words: [textWord({ characters: "\n" + openResult.message })],
+                  words: [textWord({ characters: '\n' + openResult.message })],
                 }),
               ]);
             }
