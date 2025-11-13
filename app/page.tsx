@@ -90,7 +90,7 @@ function getInventoryDisplayText(
   return displayText;
 }
 
-const MAX_DEMO_ACTIONS = 10;
+const MAX_DEMO_ACTIONS = 9999;
 export default function Home() {
   const { data } = useGoogleSheet(
     '1S7Zvw3-ltXztRLR9fH60jIa8Qb8NDT82KNsGQcRYHlg'
